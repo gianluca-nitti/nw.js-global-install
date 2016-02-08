@@ -2,6 +2,6 @@ language: c
 sudo: required
 dist: trusty
 install:
-- sudo ./setup-tools/get-ubuntu-packages.sh
+- sudo ./setup-tools/get-apt-packages.sh
 - ./setup-tools/setup.sh
 script: make
