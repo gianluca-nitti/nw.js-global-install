@@ -1,0 +1,9 @@
+mainDlg = dialog[TITLE="Nw.js runtime files setup", ALIGNMENT=ACENTER, MARGIN=100x100, ICON=MAINICON](
+	hbox[ALIGNMENT=ACENTER](
+		fill(),
+		vbox[ALIGNMENT=ACENTER](
+			label("Test")
+		),
+		fill()
+	)
+)

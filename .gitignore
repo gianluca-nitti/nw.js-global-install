@@ -1,0 +1,10 @@
+nwjsmanager/build/
+nwjsmanager/lib/
+nwjsmanager/tools/ledc
+nwjsmanager/tools/im_copy
+nwjsmanager/tools/im/
+nwjsmanager/res/resources.obj
+nwjsmanager/res/gui_compiled_win.c
+nwjsmanager/res/gui_compiled_linux.c
+nwjsmanager/res/icon.led
+*~
