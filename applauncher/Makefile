@@ -9,7 +9,8 @@ dir:
 	mkdir -p build/win32 build/linux32 build/linux64
 
 win32: dir
-	i686-w64-mingw32-gcc main.c $(CFLAGS) -mwindows -o build/win32/applauncher.exe
+	i686-w64-mingw32-windres res-win.rc -O coff -o resources.obj
+	i686-w64-mingw32-gcc main.c resources.obj $(CFLAGS) -mwindows -o build/win32/applauncher.exe
 	i686-w64-mingw32-strip build/win32/applauncher.exe
 
 linux32: dir

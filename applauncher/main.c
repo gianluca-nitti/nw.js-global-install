@@ -10,10 +10,12 @@
 #endif
 #define NWJSMANAGERPATH "/opt/nwjsmanager/nwjsmanager " //TODO: replace with a good location for nwjsmanager and define different paths for Windows and Linux
 
+
+
 //Shows a message. Requires command line arguments because they are required by gtk_init.
 void showMsg(int argc, char **argv, char *msg, char *appName){
 	char *message = malloc((strlen(msg) - 1 + strlen(appName))*sizeof(char));
-	sprintf(message, msg, appName); //TODO: remove .exe on windows
+	sprintf(message, msg, appName);
 	#ifdef _WIN32
 		MessageBox(NULL, message, appName, MB_ICONERROR);
 	#else
@@ -60,6 +62,9 @@ int main(int argc, char **argv){
 	char *binPath_copy = strcpy(malloc((strlen(binPath) + 1)*sizeof(char)), binPath);
 	char *binDir = dirname(binPath);
 	char *binName = basename(binPath_copy);
+	char *dot = strrchr(binName, '.'); //To remove the trailing .exe on Windows
+	if(dot && !strcmp(dot, ".exe"))
+		binName[strlen(binName) - 4] = 0;
 	printf("[DEBUG] Application directory: %s\n[DEBUG] Application name: %s\n", binDir, binName);
 	char *packageJsonPath = concat(binDir, "/package.json");
 	printf("[DEBUG] Application's package.json path: %s\n", packageJsonPath);
