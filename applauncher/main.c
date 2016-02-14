@@ -8,9 +8,12 @@
 #else
 	#include <gtk/gtk.h>
 #endif
-#define NWJSMANAGERPATH "/opt/nwjsmanager/nwjsmanager " //TODO: replace with a good location for nwjsmanager and define different paths for Windows and Linux
 
-
+#ifdef _WIN32
+	#define NWJSMANAGERPATH "C:\\nwjsmanager.exe"
+#else
+	#define NWJSMANAGERPATH "/opt/nwjsmanager/nwjsmanager" //TODO: replace with a good location for nwjsmanager and define different paths for Windows and Linux
+#endif
 
 //Shows a message. Requires command line arguments because they are required by gtk_init.
 void showMsg(int argc, char **argv, char *msg, char *appName){
@@ -76,29 +79,17 @@ int main(int argc, char **argv){
 		return 1;
 	}
 	free(packageJsonPath);
-	char *cmd = concat(NWJSMANAGERPATH, "--version");
-	if(system(cmd) != 0){
-		showMsg(argc, argv, "Couldn't find nwjsmanager, the tool required to launch %s. Please try reinstalling the application.", binName);
-		free(cmd);
+	char *nwjsmanagerpath = getenv("NWJSMANAGERPATH");
+	if(!nwjsmanagerpath)
+		nwjsmanagerpath = NWJSMANAGERPATH;
+	printf("[DEBUG] Path to nwjsmanager: %s\n", nwjsmanagerpath);
+	if(access(nwjsmanagerpath, X_OK) != 0){
+		showMsg(argc, argv, "Couldn't find nwjsmanager, the tool required to launch %s.\nIf you have set the NWJSMANAGERPATH environment variable, it is set to a file that doesn't exists; unset it to search for nwjsmanager in the default path. If you haven't set the variable and you just want to run the application, please try reinstalling the application.", binName);
 		free(binPath);
 		free(binPath_copy);
 		return 1;
 	}
-	free(cmd);
-	cmd = concat(NWJSMANAGERPATH, binDir);
 	free(binPath);
 	free(binPath_copy);
-	//Command line arguments are passed to nwjsmanager.
-	int argIndex;
-	for(argIndex = 1; argIndex < argc; argIndex++){
-		char *arg = concat(" ", argv[argIndex]);
-		char *oldCmd = cmd;
-		cmd = concat(oldCmd, arg);
-		free(oldCmd);
-		free(arg);
-	}
-	printf("[DEBUG] Launch command: %s\n", cmd);
-	int result = system(cmd);
-	free(cmd);
-	return result;
+	return execv(NWJSMANAGERPATH, argv);
 }
