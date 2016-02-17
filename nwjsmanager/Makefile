@@ -9,7 +9,7 @@ WINDRES=i686-w64-mingw32-windres
 STRIP_LINUX=strip
 STRIP_WIN=i686-w64-mingw32-strip
 
-CFLAGS= -Os -fdata-sections -ffunction-sections -Wall -Werror -Wl,--gc-sections
+CFLAGS=--std=gnu99 -Os -fdata-sections -ffunction-sections -Wall -Werror -Wl,--gc-sections
 
 GTK_LIBS=-lgtk-x11-2.0 -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lpango-1.0 -lgobject-2.0 -lgmodule-2.0 -lglib-2.0 -lXext -lX11 -lm
 

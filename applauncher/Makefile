@@ -1,4 +1,4 @@
-CFLAGS= -Os -fdata-sections -ffunction-sections -Wall -Werror -Wl,--gc-sections
+CFLAGS=--std=gnu99 -Os -fdata-sections -ffunction-sections -Wall -Werror -Wl,--gc-sections
 GTKFLAGS=$(shell pkg-config --cflags gtk+-2.0) -lgtk-x11-2.0 -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lpango-1.0 -lgobject-2.0 -lgmodule-2.0 -lglib-2.0 -lXext -lX11 -lm
 
 all: win32 linux32 linux64
