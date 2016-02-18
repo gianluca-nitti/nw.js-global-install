@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -e
 # This script is written for distributions based on .deb packages, and it requires the apt-get package manager.
 # Run this script to install the cross-compilers for Windows and the compiler libraries to compile for x86 linux from x86_64 linux.
 # This script needs to be run as superuser (use sudo ./get-packages.sh)

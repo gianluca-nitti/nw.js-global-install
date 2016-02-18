@@ -91,7 +91,7 @@ int main(int argc, char **argv){
 		free(binPath_copy);
 		return 1;
 	}
-	char **args = calloc(argc + 1, sizeof(char*));
+	char **args = calloc(argc + 2, sizeof(char*));
 	args[0] = nwjsmanagerpath;
 	args[1] = strdup(binDir); //argv will be passed to nwjsmanager; the application directory is passed as the first command line argument
 	for(int i = 1; i < argc; i++)

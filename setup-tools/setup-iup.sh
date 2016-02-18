@@ -1,7 +1,6 @@
-#! /bin/bash
+#! /bin/bash -e
 #This script will download the IUP libraries to the nwjsmanager/lib/ directory.
 
-set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/../nwjsmanager
 

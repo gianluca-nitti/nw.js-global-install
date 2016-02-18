@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -e
 #This script will download the curl source from the official repository and compile an http-only version of libcur for the target platforms.
 
 VERSION=curl-7_46_0

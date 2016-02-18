@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <iup.h>
-
 #include <stdio.h>
 
 Ihandle *mainDlg;
