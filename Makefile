@@ -3,6 +3,7 @@ all: applauncher nwjsmanager
 applauncher:
 	cd applauncher && $(MAKE)
 nwjsmanager:
+	cd nwjsmanager && $(MAKE) test
 	cd nwjsmanager && $(MAKE)
 clean:
 	cd applauncher && $(MAKE) clean

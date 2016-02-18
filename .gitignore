@@ -1,5 +1,6 @@
 applauncher/build/
 applauncher/resources.obj
+nwjsmanager/test/test
 nwjsmanager/build/
 nwjsmanager/lib/
 nwjsmanager/tools/ledc

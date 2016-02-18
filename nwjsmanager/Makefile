@@ -23,7 +23,7 @@ LIBS_LINUX64=lib/linux64/iup/libiup.a $(GTK_LIBS) lib/linux64/libjsmn.a
 
 all: win32 linux32 linux64
 
-.PHONY: dir ledc win32 linux32 linux64 clean
+.PHONY: dir ledc win32 linux32 linux64 clean test
 
 dir:
 	mkdir -p build
@@ -56,3 +56,6 @@ linux64: dir ledc
 clean:
 	rm -rf build/
 	rm -f res/gui_compiled_win.c res/gui_compiled_linux.c res/icon.led
+
+test:
+	cd test && $(MAKE)
