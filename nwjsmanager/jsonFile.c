@@ -10,7 +10,7 @@ static char* readFile(char *path){
 	if(!f)
 		return NULL;
 	fseek(f, 0, SEEK_END);
-	char *buffer = malloc(ftell(f)*sizeof(char));
+	char *buffer = malloc((ftell(f) + 1)*sizeof(char));
 	fseek(f, 0, SEEK_SET);
 	int i = 0;
 	while(!feof(f))
@@ -22,6 +22,18 @@ static char* readFile(char *path){
 
 static int is_jsmn_error(int i){
 	return i == JSMN_ERROR_INVAL || i == JSMN_ERROR_NOMEM || i == JSMN_ERROR_PART;
+}
+
+//(internal function) Recursively counts all the children tokens.
+int countAllSubTokens(jsonFile_t *f, int root){
+	int result = f->tokens[root].size;
+	int offset = root + 1;
+	for(int i = 0; i < f->tokens[root].size; i++){
+		int n = countAllSubTokens(f, offset + i);
+		offset += n;
+		result += n;
+	}
+	return result;
 }
 
 //Reads a json file and parses it using the jsmn library.
@@ -59,6 +71,8 @@ void json_file_free(jsonFile_t *f){
 
 //Get the string value of a token.
 char* json_file_get_token_value(jsonFile_t *f, int index){
+	if(!f || index < 0 || index >= f->tokenCount)
+		return NULL;
 	jsmntok_t token = f->tokens[index];
 	int len = token.end - token.start;
 	char *result = malloc((len + 1) * sizeof(char));
@@ -66,20 +80,42 @@ char* json_file_get_token_value(jsonFile_t *f, int index){
 	return result;
 }
 
-//Find for a token, direct children of root (last argument) with the string value equal to key (second argument)
+//Search for a token, direct children of root (last argument) with the string value equal to key (second argument)
 int json_file_get_token_index(jsonFile_t *f, char *key, int root){
 	if(!f)
 		return JSON_ERROR;
 	int result = JSON_ERROR;
-	for(int i = root; i < f->tokens[root].size; i++){
-		char *val = json_file_get_token_value(f, i);
+	int offset = root + 1;
+	for(int i = 0; i < f->tokens[root].size; i++){
+		char *val = json_file_get_token_value(f, offset + i);
+		if(!val)
+			return JSON_ERROR;
 		if(strcmp(val, key) == 0)
-			result = i;
+			result = offset + i;
 		free(val);
 		if(result != JSON_ERROR)
 			break;
-		if(i != root && i < f->tokenCount - 1)
-			i += f->tokens[i].size; //to skip nested tokens
+		if(i < f->tokenCount - 1)
+			offset += countAllSubTokens(f, offset + i); //f->tokens[offset + i].size; //to skip nested tokens
 	}
 	return result;
+}
+
+//Check if the specified token, n-th child of root, exists and return its absolute index
+int json_file_get_subtoken_abs_index(jsonFile_t *f, int root, int n){
+	if(!f || root >= f->tokenCount || n >= f->tokens[root].size)
+		return JSON_ERROR;
+	return root + n + 1;
+}
+
+//A slightly higher level function to get the value from a key-value pair.
+char* json_file_get_value_from_key(jsonFile_t *f, char *key, int root){
+	int keyIndex = json_file_get_token_index(f, key, root);
+	if(keyIndex == JSON_ERROR)
+		return NULL;
+	int valueIndex = json_file_get_subtoken_abs_index(f, keyIndex, 0);
+	if(valueIndex == JSON_ERROR)
+		return NULL;
+	char *value = json_file_get_token_value(f, valueIndex);
+	return value;
 }
