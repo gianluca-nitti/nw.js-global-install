@@ -1,8 +1,10 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "test.h"
 #include "../jsonFile.h"
+#include "../packageJsonFile.h"
 
 int parseSimpleJson(){
 	jsonFile_t f;
@@ -36,10 +38,16 @@ int parsePackageJson(){ //TODO: fix memory leaks (when returning failures, memor
 		free(version);
 		return 0;
 	}
-	int deps = json_file_get_token_index(&f, "dependencies", 0) + 1;
+	int deps = json_file_get_token_index(&f, "dependencies", 0);
 	if(deps == JSON_ERROR)
 		return 0;
-	char *nw_ver = json_file_get_value_from_key(&f, "nw", deps);
+	int window = json_file_get_token_index(&f, "window", 0);
+	if(window == JSON_ERROR)
+		return 0;
+	int toolbar = json_file_get_token_index(&f, "toolbar", window + 1);
+	if(toolbar == JSON_ERROR || !json_file_token_is_boolean(&f, toolbar + 1) || json_file_get_token_value_boolean(&f, toolbar + 1))
+		return 0;
+	char *nw_ver = json_file_get_value_from_key(&f, "nw", deps + 1);
 	int result = strcmp(version, "1.0.0") == 0 && strcmp(nw_ver, "^0.12.2") == 0;
 	json_file_free(&f);
 	free(version);
@@ -47,9 +55,22 @@ int parsePackageJson(){ //TODO: fix memory leaks (when returning failures, memor
 	return result;
 }
 
+int parseAppPackageJson(){
+	packageJsonFile_t packageJson;
+	int result = packageJson_file_parse("package.json", &packageJson);
+	if(result != JSON_SUCCESS){
+		packageJson_file_free(&packageJson);
+		return 0;
+	}
+	result = strcmp(packageJson.name, "nw-image-viewer") == 0 && strcmp(packageJson.versionFilter, ">=0.12.2") == 0 && packageJson.forceLatest;
+	packageJson_file_free(&packageJson);
+	return result;
+}
+
 int main(int argc, char **argv){
-	test_init(2);
+	test_init(3);
 	test_add("Parse a simple JSON file", parseSimpleJson);
 	test_add("Parse a package.json file", parsePackageJson);
+	test_add("Cast an application's package.json file to a packageJsonFile_t struct", parseAppPackageJson);
 	return test_run();
 }

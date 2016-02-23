@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +26,7 @@ static int is_jsmn_error(int i){
 }
 
 //(internal function) Recursively counts all the children tokens.
-int countAllSubTokens(jsonFile_t *f, int root){
+static int countAllSubTokens(jsonFile_t *f, int root){
 	int result = f->tokens[root].size;
 	int offset = root + 1;
 	for(int i = 0; i < f->tokens[root].size; i++){
@@ -63,8 +64,10 @@ int json_file_parse(char* file, jsonFile_t *out){
 
 void json_file_free(jsonFile_t *f){
 	if(f){
-		free(f->str);
-		free(f->tokens);
+		if(f->str)
+			free(f->str);
+		if(f->tokens)
+			free(f->tokens);
 		f->tokenCount = 0;
 	}
 }
@@ -96,7 +99,7 @@ int json_file_get_token_index(jsonFile_t *f, char *key, int root){
 		if(result != JSON_ERROR)
 			break;
 		if(i < f->tokenCount - 1)
-			offset += countAllSubTokens(f, offset + i); //f->tokens[offset + i].size; //to skip nested tokens
+			offset += countAllSubTokens(f, offset + i); //to skip nested tokens
 	}
 	return result;
 }
@@ -118,4 +121,24 @@ char* json_file_get_value_from_key(jsonFile_t *f, char *key, int root){
 		return NULL;
 	char *value = json_file_get_token_value(f, valueIndex);
 	return value;
+}
+
+//Check if the token at tokenIndex can be casted to a boolean (does NOT return it's value, only performs a check - for the value, there is the json_file_get_token_value_boolean function).
+bool json_file_token_is_boolean(jsonFile_t *f, int index){
+	if(!f || index < 0 || index >= f->tokenCount || f->tokens[index].type != JSMN_PRIMITIVE)
+		return false;
+	char *val = json_file_get_token_value(f, index);
+	bool result = val[0] == 'f' || val[0] == 't';
+	free(val);
+	return result;
+}
+
+//Read the token's value as a boolean
+bool json_file_get_token_value_boolean(jsonFile_t *f, int index){
+	if(!json_file_token_is_boolean(f, index))
+		return false;
+	char *val = json_file_get_token_value(f, index);
+	bool result = val[0] == 't';
+	free(val);
+	return result;
 }

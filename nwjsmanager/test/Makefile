@@ -1,4 +1,4 @@
-SRC=../jsonFile.c
+SRC=../jsonFile.c ../packageJsonFile.c
 INCS=-I../lib/src/jsmn-src
 LIBS=../lib/linux64/libjsmn.a
 
