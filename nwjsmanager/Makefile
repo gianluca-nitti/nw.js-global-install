@@ -13,13 +13,13 @@ CFLAGS=--std=gnu99 -Os -fdata-sections -ffunction-sections -Wall -Werror -Wl,--g
 
 GTK_LIBS=-lgtk-x11-2.0 -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lpango-1.0 -lgobject-2.0 -lgmodule-2.0 -lglib-2.0 -lXext -lX11 -lm
 
-INCS_WIN32=-Ilib/win32/iup/include -Ilib/src/jsmn-src
-INCS_LINUX32=-Ilib/linux32/iup/include -Ilib/src/jsmn-src
-INCS_LINUX64=-Ilib/linux64/iup/include -Ilib/src/jsmn-src
+INCS_WIN32=-Ilib/win32/iup/include -Ilib/src/jsmn-src -Ilib/src/semver.c-src
+INCS_LINUX32=-Ilib/linux32/iup/include -Ilib/src/jsmn-src -Ilib/src/semver.c-src
+INCS_LINUX64=-Ilib/linux64/iup/include -Ilib/src/jsmn-src -Ilib/src/semver.c-src
 
-LIBS_WIN32=lib/win32/iup/libiup.a -lgdi32 -lcomdlg32 -lcomctl32 -luuid -loleaut32 -lole32 lib/win32/libjsmn.a
-LIBS_LINUX32=lib/linux32/iup/libiup.a $(GTK_LIBS) lib/linux32/libjsmn.a
-LIBS_LINUX64=lib/linux64/iup/libiup.a $(GTK_LIBS) lib/linux64/libjsmn.a
+LIBS_WIN32=lib/win32/iup/libiup.a -lgdi32 -lcomdlg32 -lcomctl32 -luuid -loleaut32 -lole32 lib/win32/libjsmn.a lib/win32/libsemver.a
+LIBS_LINUX32=lib/linux32/iup/libiup.a $(GTK_LIBS) lib/linux32/libjsmn.a lib/linux32/libsemver.a
+LIBS_LINUX64=lib/linux64/iup/libiup.a $(GTK_LIBS) lib/linux64/libjsmn.a lib/linux64/libsemver.a
 
 all: win32 linux32 linux64
 

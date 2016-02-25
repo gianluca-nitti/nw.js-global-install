@@ -1,6 +1,6 @@
 SRC=../jsonFile.c ../packageJsonFile.c
-INCS=-I../lib/src/jsmn-src
-LIBS=../lib/linux64/libjsmn.a
+INCS=-I../lib/src/jsmn-src -I../lib/src/semver.c-src
+LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a
 
 .PHONY: all run clean
 

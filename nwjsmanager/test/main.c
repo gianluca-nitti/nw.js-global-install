@@ -58,11 +58,11 @@ int parsePackageJson(){ //TODO: fix memory leaks (when returning failures, memor
 int parseAppPackageJson(){
 	packageJsonFile_t packageJson;
 	int result = packageJson_file_parse("package.json", &packageJson);
-	if(result != JSON_SUCCESS){
-		packageJson_file_free(&packageJson);
+	if(result != JSON_SUCCESS)
 		return 0;
-	}
-	result = strcmp(packageJson.name, "nw-image-viewer") == 0 && strcmp(packageJson.versionFilter, ">=0.12.2") == 0 && packageJson.forceLatest;
+	if(!packageJson.versionFilter)
+		return 0;
+	result = strcmp(packageJson.name, "nw-image-viewer") == 0 && packageJson.forceLatest && packageJson.versionFilter->major == 0 && packageJson.versionFilter->minor == 12 && packageJson.versionFilter->patch == 2;
 	packageJson_file_free(&packageJson);
 	return result;
 }

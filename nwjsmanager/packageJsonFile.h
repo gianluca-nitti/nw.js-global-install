@@ -2,11 +2,12 @@
 #define _PACKAGEJSONFILE_H
 
 #include <stdbool.h>
-#define PACKAGEJSON_PARSE_ERROR -2
+#include <semver.h>
+#define PACKAGEJSON_PARSE_ERROR_SEMVER -2
 
 typedef struct{
 	char *name;
-	char *versionFilter;
+	semver_t *versionFilter;
 	bool forceLatest;
 }packageJsonFile_t;
 
