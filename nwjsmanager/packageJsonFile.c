@@ -5,6 +5,10 @@
 #include "jsonFile.h"
 #include "packageJsonFile.h"
 
+static int is_semver_operator(char c){
+	return c == '=' || c == '<' || c == '>' || c == '^' || c == '~';
+}
+
 //Cast the application's metadata from a package.json file to a packageJsonFile_t struct.
 int packageJson_file_parse(char *f, packageJsonFile_t *out){
 	jsonFile_t file;
@@ -23,11 +27,21 @@ int packageJson_file_parse(char *f, packageJsonFile_t *out){
 	}else{
 		char *versionFilter = json_file_get_value_from_key(&file, "nwjs-version-filter", nwjsmanager_root_token + 1);
 		if(versionFilter){
-			out->versionFilter = malloc(sizeof(semver_t));
-			if(semver_parse(versionFilter, out->versionFilter) != 0){
-				free(out->versionFilter);
-				out->versionFilter = NULL;
-			}
+			if(is_semver_operator(versionFilter[0])){
+				int operatorLen = 1;
+				out->versionFilterOperator[0] = versionFilter[0];
+				if(is_semver_operator(versionFilter[1])){
+					out->versionFilterOperator[1] = versionFilter[1];
+					operatorLen++;
+				}else
+					out->versionFilterOperator[1] = '\0';
+				out->versionFilter = malloc(sizeof(semver_t));
+				if(semver_parse(versionFilter + operatorLen * sizeof(char), out->versionFilter) != 0){
+					free(out->versionFilter);
+					result = PACKAGEJSON_PARSE_ERROR_SEMVER;
+				}
+			}else
+				result = PACKAGEJSON_PARSE_ERROR_SEMVER;
 			free(versionFilter);
 		}else
 			out->versionFilter = NULL;
@@ -38,9 +52,10 @@ int packageJson_file_parse(char *f, packageJsonFile_t *out){
 			out->forceLatest = false;
 	}
 	json_file_free(&file);
-	return JSON_SUCCESS;
+	return result;
 }
 
+//Free the memory associated with a packageJsonFile_t pointer.
 void packageJson_file_free(packageJsonFile_t *f){
 	if(f){
 		if(f->name)
@@ -52,3 +67,10 @@ void packageJson_file_free(packageJsonFile_t *f){
 	}
 }
 
+//Check if the application associated with the provided package.json supports the provided NW.JS version. The last argument is necessary to check for the "forceLatest" requirement.
+int packageJson_file_is_nw_version_OK(packageJsonFile_t *f, semver_t nwVersion, semver_t latestNwVersion){
+	if(semver_satisfies(nwVersion, *f->versionFilter, f->versionFilterOperator))
+		if(!f->forceLatest || semver_compare(nwVersion, latestNwVersion) == 0)
+			return true;
+	return false;
+}

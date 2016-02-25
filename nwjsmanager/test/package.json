@@ -19,7 +19,7 @@
     "nw": "^0.12.2"
   }
   "nwjsmanager": {
-    "nwjs-version-filter": "0.12.2",
+    "nwjs-version-filter": ">=0.12.2",
     "force-latest": true
   }
 }

@@ -62,7 +62,14 @@ int parseAppPackageJson(){
 		return 0;
 	if(!packageJson.versionFilter)
 		return 0;
-	result = strcmp(packageJson.name, "nw-image-viewer") == 0 && packageJson.forceLatest && packageJson.versionFilter->major == 0 && packageJson.versionFilter->minor == 12 && packageJson.versionFilter->patch == 2;
+	semver_t unsupportedVersion, supportedVersion1, supportedVersion2;
+	semver_parse("0.11.0", &unsupportedVersion);
+	semver_parse("0.12.2", &supportedVersion1);
+	semver_parse("0.13.1", &supportedVersion2);
+	result = strcmp(packageJson.name, "nw-image-viewer") == 0 && packageJson.forceLatest
+		&& packageJson.versionFilter->major == 0 && packageJson.versionFilter->minor == 12 && packageJson.versionFilter->patch == 2
+		&& packageJson.versionFilterOperator[0] == '>' && packageJson.versionFilterOperator[1] == '='
+		&& !packageJson_file_is_nw_version_OK(&packageJson, unsupportedVersion, supportedVersion2) && !packageJson_file_is_nw_version_OK(&packageJson, supportedVersion1, supportedVersion2) && packageJson_file_is_nw_version_OK(&packageJson, supportedVersion2, supportedVersion2);
 	packageJson_file_free(&packageJson);
 	return result;
 }
