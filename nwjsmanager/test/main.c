@@ -5,6 +5,7 @@
 #include "test.h"
 #include "../jsonFile.h"
 #include "../packageJsonFile.h"
+#include "../indexJsonFile.h"
 
 int parseSimpleJson(){
 	jsonFile_t f;
@@ -47,11 +48,24 @@ int parsePackageJson(){ //TODO: fix memory leaks (when returning failures, memor
 	int toolbar = json_file_get_token_index(&f, "toolbar", window + 1);
 	if(toolbar == JSON_ERROR || !json_file_token_is_boolean(&f, toolbar + 1) || json_file_get_token_value_boolean(&f, toolbar + 1))
 		return 0;
+	int nwjsmanager_root_token = json_file_get_token_index(&f, "nwjsmanager", 0);
+	if(nwjsmanager_root_token == JSON_ERROR)
+		return 0;
+	nwjsmanager_root_token = json_file_get_subtoken_abs_index(&f, nwjsmanager_root_token, 0);
+	if(nwjsmanager_root_token == JSON_ERROR)
+		return 0;
+	int *nwjsmanager_values = json_file_get_subtokens_indices(&f, nwjsmanager_root_token);
+	if(!nwjsmanager_values)
+		return 0;
+	int nw_version_index = nwjsmanager_values[0];
+	free(nwjsmanager_values);
 	char *nw_ver = json_file_get_value_from_key(&f, "nw", deps + 1);
-	int result = strcmp(version, "1.0.0") == 0 && strcmp(nw_ver, "^0.12.2") == 0;
+	char *nwjsmanager_version_filter = json_file_get_token_value(&f, nw_version_index);
+	int result = strcmp(version, "1.0.0") == 0 && strcmp(nw_ver, "^0.12.2") == 0 && strcmp(nwjsmanager_version_filter, "nwjs-version-filter") == 0;
 	json_file_free(&f);
 	free(version);
 	free(nw_ver);
+	free(nwjsmanager_version_filter);
 	return result;
 }
 
@@ -74,10 +88,23 @@ int parseAppPackageJson(){
 	return result;
 }
 
+int parseIndexJson(){
+	indexJsonFile_t indexJson;
+	int result = indexJson_file_parse("../../index.json", &indexJson);
+	if(result != JSON_SUCCESS){
+		indexJson_file_free(&indexJson);
+		return 0;
+	}
+	result = indexJson.nwjsmanagerLatestVersion.major == 1 && indexJson.nwjsmanagerLatestVersion.minor == 0 && indexJson.nwjsmanagerLatestVersion.patch == 0;
+	indexJson_file_free(&indexJson);
+	return result;
+}
+
 int main(int argc, char **argv){
-	test_init(3);
+	test_init(4);
 	test_add("Parse a simple JSON file", parseSimpleJson);
 	test_add("Parse a package.json file", parsePackageJson);
 	test_add("Cast an application's package.json file to a packageJsonFile_t struct", parseAppPackageJson);
+	test_add("Parse the index.json file", parseIndexJson);
 	return test_run();
 }

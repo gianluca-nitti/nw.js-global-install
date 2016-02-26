@@ -133,12 +133,26 @@ bool json_file_token_is_boolean(jsonFile_t *f, int index){
 	return result;
 }
 
-//Read the token's value as a boolean
+//Read the token's value as a boolean.
 bool json_file_get_token_value_boolean(jsonFile_t *f, int index){
 	if(!json_file_token_is_boolean(f, index))
 		return false;
 	char *val = json_file_get_token_value(f, index);
 	bool result = val[0] == 't';
 	free(val);
+	return result;
+}
+
+//Fills a vector of integers (dinamically allocated with malloc) with the absolute indices of the tokens children of a given token in a json file.
+int* json_file_get_subtokens_indices(jsonFile_t *f, int root){
+	if(!f || root < 0 || root >= f->tokenCount)
+		return NULL;
+	int *result = malloc(f->tokens[root].size * sizeof(int));
+	int offset = root + 1;
+	for(int i = 0; i < f->tokens[root].size; i++){
+		result[i] = offset + i;
+		if(i < f->tokenCount - 1)
+			offset += countAllSubTokens(f, offset + i); //to skip nested tokens
+	}
 	return result;
 }

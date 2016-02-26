@@ -21,5 +21,6 @@ int json_file_get_subtoken_abs_index(jsonFile_t *f, int root, int n);
 char *json_file_get_value_from_key(jsonFile_t *f, char *key, int root);
 bool json_file_token_is_boolean(jsonFile_t *f, int index);
 bool json_file_get_token_value_boolean(jsonFile_t *f, int index);
+int* json_file_get_subtokens_indices(jsonFile_t *f, int root);
 
 #endif

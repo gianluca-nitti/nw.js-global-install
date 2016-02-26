@@ -1,4 +1,4 @@
-SRC=../jsonFile.c ../packageJsonFile.c
+SRC=../jsonFile.c ../packageJsonFile.c ../indexJsonFile.c
 INCS=-I../lib/src/jsmn-src -I../lib/src/semver.c-src
 LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a
 
