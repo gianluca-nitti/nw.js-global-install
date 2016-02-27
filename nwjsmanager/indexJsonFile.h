@@ -7,6 +7,7 @@
 #endif
 
 #define INDEXJSON_ERROR_NWJSMANAGER_VERSION -2
+#define INDEXJSON_ERROR_NWJS_INDEX -3
 
 typedef struct{
 	char *linux32;

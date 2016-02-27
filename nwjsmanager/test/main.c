@@ -96,6 +96,12 @@ int parseIndexJson(){
 		return 0;
 	}
 	result = indexJson.nwjsmanagerLatestVersion.major == 1 && indexJson.nwjsmanagerLatestVersion.minor == 0 && indexJson.nwjsmanagerLatestVersion.patch == 0;
+	for(int i = 0; i < indexJson.nwjsVersionCount; i++){
+		if(indexJson.nwjsVersions[i].version.major == 0 && indexJson.nwjsVersions[i].version.minor == 12)
+			result &= indexJson.nwjsVersions[i].defaultDownloads.linux64 != NULL && indexJson.nwjsVersions[i].naclDownloads.win32 == NULL && indexJson.nwjsVersions[i].sdkDownloads.win32 == NULL;
+		else if (indexJson.nwjsVersions[i].version.major == 0 && indexJson.nwjsVersions[i].version.minor == 13)
+			result &= indexJson.nwjsVersions[i].defaultDownloads.linux32 != NULL && indexJson.nwjsVersions[i].naclDownloads.win64 != NULL && indexJson.nwjsVersions[i].sdkDownloads.win32 != NULL;
+	}
 	indexJson_file_free(&indexJson);
 	return result;
 }

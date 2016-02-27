@@ -7,7 +7,7 @@ LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a
 all: run
 
 test: clean
-	gcc --std=gnu99 main.c test.c $(SRC) $(INCS) $(LIBS) -g -o $@
+	gcc --std=gnu99 -Wall -Werror main.c test.c $(SRC) $(INCS) $(LIBS) -g -o $@
 
 run: test
 	./$<
