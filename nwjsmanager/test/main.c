@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "test.h"
 #include "../jsonFile.h"
 #include "../packageJsonFile.h"
 #include "../indexJsonFile.h"
+#include "../nwjsBinaryCache.h"
 
 int parseSimpleJson(){
 	jsonFile_t f;
@@ -106,11 +108,23 @@ int parseIndexJson(){
 	return result;
 }
 
+int listInstalledNwjsVersions(){
+	chdir("./chroot");
+	if(chroot(".") != 0)
+		return 0;
+	semverList_t versionList = nwjs_binary_cache_get_versions();
+	int result = versionList.count == 2 && versionList.items[0].major == 0 && versionList.items[0].minor == 12 && versionList.items[0].patch == 1
+		&& versionList.items[1].major == 0 && versionList.items[1].minor == 13 && versionList.items[1].patch == 0;
+	semverList_free(&versionList);
+	return result;
+}
+
 int main(int argc, char **argv){
-	test_init(4);
+	test_init(5);
 	test_add("Parse a simple JSON file", parseSimpleJson);
 	test_add("Parse a package.json file", parsePackageJson);
 	test_add("Cast an application's package.json file to a packageJsonFile_t struct", parseAppPackageJson);
 	test_add("Parse the index.json file", parseIndexJson);
+	test_add("List locally installed nwjs versions in a simulated environment (note: sudo is required)", listInstalledNwjsVersions);
 	return test_run();
 }
