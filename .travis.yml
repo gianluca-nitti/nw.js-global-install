@@ -4,4 +4,4 @@ dist: trusty
 install:
 - sudo ./setup-tools/get-apt-packages.sh
 - ./setup-tools/setup.sh
-script: make
+script: sudo make
