@@ -108,17 +108,19 @@ int parseIndexJson(){
 	return result;
 }
 
+static int versionEq(semver_t version, int major, int minor, int patch){
+	return version.major == major && version.minor == minor && version.patch == patch;
+}
+
 int listInstalledNwjsVersions(){
 	chdir("./chroot");
 	if(chroot(".") != 0){
-		puts("failed to enter chroot environment\n");
+		puts("failed to enter chroot environment");
 		return 0;
 	}
 	semverList_t versionList = nwjs_binary_cache_get_versions();
-	for(int i = 0; i < versionList.count; i++)
-		printf("Version %d: %d.%d.%d\n", i, versionList.items[i].major, versionList.items[i].minor, versionList.items[i].patch);
-	int result = versionList.count == 2 && versionList.items[0].major == 0 && versionList.items[0].minor == 12 && versionList.items[0].patch == 1
-		&& versionList.items[1].major == 0 && versionList.items[1].minor == 13 && versionList.items[1].patch == 0;
+	int result = versionList.count == 2 && (versionEq(versionList.items[0], 0, 12, 1) || versionEq(versionList.items[0], 0, 13, 0))
+		&& (versionEq(versionList.items[1], 0, 12, 1) || versionEq(versionList.items[1], 0, 13, 0));
 	semverList_free(&versionList);
 	return result;
 }
