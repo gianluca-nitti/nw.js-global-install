@@ -34,7 +34,8 @@ semverList_t nwjs_binary_cache_get_versions(){
 			result.count++;
 			if(result.count == allocatedSize)
 				result.items = realloc(result.items, (allocatedSize = result.count + 1) * sizeof(semver_t));
-		}
+		}else
+			semver_free(&result.items[result.count]);
 	}
 	closedir(d);
 	free(binDir);
