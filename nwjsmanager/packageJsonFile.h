@@ -3,7 +3,8 @@
 
 #include <stdbool.h>
 #include <semver.h>
-#define PACKAGEJSON_PARSE_ERROR_SEMVER -2
+#define PACKAGEJSON_PARSE_ERROR_NAME -2
+#define PACKAGEJSON_PARSE_ERROR_SEMVER -3
 
 typedef struct{
 	char *name;

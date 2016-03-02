@@ -11,15 +11,17 @@ static int is_semver_operator(char c){
 
 //Cast the application's metadata from a package.json file to a packageJsonFile_t struct.
 int packageJson_file_parse(char *f, packageJsonFile_t *out){
-	jsonFile_t file;
+	jsonFile_t file = {};
 	int result = json_file_parse(f, &file);
 	if(result != JSON_SUCCESS){
 		json_file_free(&file);
 		return result;
 	}
 	out->name = json_file_get_value_from_key(&file, "name", 0);
-	if(!out->name)
-		out->name = strdup("(unknown name application)");
+	if(!out->name){
+		json_file_free(&file);
+		return PACKAGEJSON_PARSE_ERROR_NAME;
+	}
 	int nwjsmanager_root_token = json_file_get_token_index(&file, "nwjsmanager", 0);
 	if(nwjsmanager_root_token == JSON_ERROR || nwjsmanager_root_token == file.tokenCount){
 		out->versionFilter = NULL;

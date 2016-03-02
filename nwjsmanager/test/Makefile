@@ -8,7 +8,7 @@ LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a
 all: run
 
 test: clean
-	gcc --std=gnu99 -Wall -Werror main.c test.c $(SRC) $(INCS) $(LIBS) -g -o $@
+	gcc --std=gnu99  -O0 -Wall -Werror main.c test.c $(SRC) $(INCS) $(LIBS) -g -o $@
 
 run: test
 	mkdir -p chroot/var/cache/nwjs/bin/{invalid-name,v0.12.1,v,vinvalid-version,v0.13.0} #Set up chroot environment to simulate some locally installed nw.js versions

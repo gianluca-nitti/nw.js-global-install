@@ -29,7 +29,7 @@ semverList_t nwjs_binary_cache_get_versions(){
 			free(filename);
 			continue;
 		}
-		free(filename); //TODO: memory leak to fix
+		free(filename);
 		if(S_ISDIR(st.st_mode) && strlen(ent->d_name) > 1 && ent->d_name[0] == 'v' && semver_parse(ent->d_name + sizeof(char), &result.items[result.count]) == 0){
 			result.count++;
 			if(result.count == allocatedSize)

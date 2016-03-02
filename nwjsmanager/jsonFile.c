@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <jsmn.h>
 #include "jsonFile.h"
 
@@ -10,8 +11,17 @@ static char* readFile(char *path){
 	FILE *f = fopen(path, "r");
 	if(!f)
 		return NULL;
-	fseek(f, 0, SEEK_END);
-	char *buffer = malloc((ftell(f) + 1)*sizeof(char));
+	//The following if statements are to ensure the file is not a directory.
+	if(fseek(f, 0, SEEK_END) < 0){
+		fclose(f);
+		return NULL;
+	}
+	long len = ftell(f);
+	if(len == -1L || len == LONG_MAX){
+		fclose(f);
+		return NULL;
+	}
+	char *buffer = malloc((len + 1)*sizeof(char));
 	fseek(f, 0, SEEK_SET);
 	int i = 0;
 	while(!feof(f))
