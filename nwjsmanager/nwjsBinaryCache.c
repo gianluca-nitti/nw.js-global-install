@@ -23,7 +23,7 @@ semverList_t nwjs_binary_cache_get_versions(){
 		struct stat st;
 		char *filename = malloc((strlen(binDir) + strlen(ent->d_name) + 2) * sizeof(char)); //TODO: could be replace with an ad-hoc function, like the concat() used in applauncher
 		strcpy(filename, binDir);
-		strcat(filename, "/");
+		//strcat(filename, "/");
 		strcat(filename, ent->d_name);
 		if(stat(filename, &st) != 0){
 			free(filename);

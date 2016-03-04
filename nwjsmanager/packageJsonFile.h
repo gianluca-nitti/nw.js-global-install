@@ -2,7 +2,9 @@
 #define _PACKAGEJSONFILE_H
 
 #include <stdbool.h>
+#ifndef __SEMVER_H
 #include <semver.h>
+#endif
 #define PACKAGEJSON_PARSE_ERROR_NAME -2
 #define PACKAGEJSON_PARSE_ERROR_SEMVER -3
 

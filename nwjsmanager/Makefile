@@ -53,6 +53,11 @@ linux64: dir ledc
 	$(CC_LINUX) res/gui_compiled_linux.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) $(CFLAGS) -o build/$@/$(APPNAME)
 	$(STRIP_LINUX) build/$@/$(APPNAME)
 
+debug: dir ledc
+	rm -rf build/$@
+	mkdir -p build/$@
+	$(CC_LINUX) res/gui_compiled_linux.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) -std=gnu99 -O0 -g -Wall -Werror -o build/$@/$(APPNAME)
+
 clean:
 	rm -rf build/
 	rm -f res/gui_compiled_win.c res/gui_compiled_linux.c res/icon.led

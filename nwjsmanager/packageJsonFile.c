@@ -71,6 +71,9 @@ void packageJson_file_free(packageJsonFile_t *f){
 
 //Check if the application associated with the provided package.json supports the provided NW.JS version. The last argument is necessary to check for the "forceLatest" requirement.
 int packageJson_file_is_nw_version_OK(packageJsonFile_t *f, semver_t nwVersion, semver_t latestNwVersion){
+	if(!f->versionFilter)
+		if(!f->forceLatest || semver_compare(nwVersion, latestNwVersion) == 0)
+			return true;
 	if(semver_satisfies(nwVersion, *f->versionFilter, f->versionFilterOperator))
 		if(!f->forceLatest || semver_compare(nwVersion, latestNwVersion) == 0)
 			return true;
