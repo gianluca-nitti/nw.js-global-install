@@ -55,6 +55,19 @@ char *getBinaryPath(){
 	return binPath;
 }
 
+//On Windows, enclose the specified string in quotes. This is require to avoid that a single command line argument containing spaces is interpreted as a set of multiple arguments.
+char* addQuotesWin(char *str){
+	#ifdef _WIN32
+		char *result = malloc((strlen(str) + 3) * sizeof(char));
+		strcpy(result, "\"");
+		strcat(result, str);
+		strcat(result, "\"");
+		return result;
+	#else
+		return strdup(str);
+	#endif
+}
+
 int main(int argc, char **argv){
 	char *binPath = getBinaryPath();
 	char *binPath_copy = strdup(binPath);
@@ -79,7 +92,7 @@ int main(int argc, char **argv){
 		#ifdef _WIN32
 			nwjsmanagerpath = (char[MAX_PATH]){};
 			SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA|CSIDL_FLAG_CREATE, NULL, 0, nwjsmanagerpath);
-			nwjsmanagerpath = strcat(nwjsmanagerpath, "\\nwjs\\nwjsmanager.exe");
+			strcat(nwjsmanagerpath, "\\nwjs\\nwjsmanager.exe");
 		#else
 			nwjsmanagerpath = "/usr/local/bin/nwjsmanager";
 		#endif
@@ -92,15 +105,8 @@ int main(int argc, char **argv){
 		return 1;
 	}
 	char **args = calloc(argc + 2, sizeof(char*));
-	args[0] = nwjsmanagerpath;
-	#ifdef _WIN32
-		args[1] = malloc(strlen(binDir) + 3);
-		strcpy(args[1], "\""); //Put the path in quotes because if it contains spaces it will interpreted as multiple arguments on Windows
-		strcat(args[1], binDir);
-		strcat(args[1], "\"");
-	#else
-		args[1] = strdup(binDir); //argv will be passed to nwjsmanager; the application directory is passed as the first command line argument
-	#endif
+	args[0] = addQuotesWin(nwjsmanagerpath);
+	args[1] = addQuotesWin(binDir); //argv will be passed to nwjsmanager; the application directory is passed as the first command line argument
 	printf("[DEBUG] Path to application's directory: %s\n", args[1]);
 	for(int i = 1; i < argc; i++)
 		args[i + 1] = argv[i];

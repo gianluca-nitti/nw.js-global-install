@@ -47,13 +47,14 @@ static int launch(){
 		printf("[nwjsmanager][DEBUG] Launching %s with nw.js v%d.%d.%d.\n", app->name, launchVersion->major, launchVersion->minor, launchVersion->patch);
 		char binDirName[256];
 		sprintf(binDirName, "v%d.%d.%d/", launchVersion->major, launchVersion->minor, launchVersion->patch);
-		char *binPath = string_concat(3, path_get_nwjs_cache(), binDirName, NWJS_BIN_NAME); //string_concat(string_concat(path_get_nwjs_cache(), binDirName), NWJS_BIN_NAME);
+		char *binPath = string_concat(3, path_get_nwjs_cache(), binDirName, NWJS_BIN_NAME);
 		printf("[nwjsmanager][DEBUG] Nw.js binary path: %s.\n", binPath);
 		char **args = calloc(_argc + 2, sizeof(char*));
 		args[0] = binPath;
 		for(int i = 1; i < _argc; i++)
 			args[i] = _argv[i];
 		#ifdef _WIN32
+			args[0] = string_concat(3, "\"", args[0], "\"");
 			args[1] = string_concat(3, "\"", args[1], "\""); //Encolsing path to the application's directory in quotes under Windows, to avoid it to be treated as multiple arguments if it contains spaces
 		#endif
 		args[_argc + 1] = NULL;
