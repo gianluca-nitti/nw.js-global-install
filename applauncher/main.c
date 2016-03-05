@@ -93,7 +93,15 @@ int main(int argc, char **argv){
 	}
 	char **args = calloc(argc + 2, sizeof(char*));
 	args[0] = nwjsmanagerpath;
-	args[1] = strdup(binDir); //argv will be passed to nwjsmanager; the application directory is passed as the first command line argument
+	#ifdef _WIN32
+		args[1] = malloc(strlen(binDir) + 3);
+		strcpy(args[1], "\""); //Put the path in quotes because if it contains spaces it will interpreted as multiple arguments on Windows
+		strcat(args[1], binDir);
+		strcat(args[1], "\"");
+	#else
+		args[1] = strdup(binDir); //argv will be passed to nwjsmanager; the application directory is passed as the first command line argument
+	#endif
+	printf("[DEBUG] Path to application's directory: %s\n", args[1]);
 	for(int i = 1; i < argc; i++)
 		args[i + 1] = argv[i];
 	args[argc + 1] = NULL;
