@@ -8,6 +8,7 @@
 #include "../packageJsonFile.h"
 #include "../indexJsonFile.h"
 #include "../nwjsBinaryCache.h"
+#include "../download.h"
 
 int parseSimpleJson(){
 	jsonFile_t f;
@@ -125,12 +126,23 @@ int listInstalledNwjsVersions(){
 	return result;
 }
 
+int downloadCb(long total, long now, double kBps){
+	printf("\rTotal bytes: %10lu, downloaded bytes: %10lu (%.2f%%), speed: %.2f kB/s   ", total, now, 100*(double)now/(double)total, kBps);
+	return 0;
+}
+
+int downloadFile(){
+	putchar('\n');
+	return download("http://dl.nwjs.io/v0.12.3/chromedriver-nw-v0.12.3-linux-x64.tar.gz", "downloadedFile", downloadCb) == DOWNLOAD_SUCCESS;
+}
+
 int main(int argc, char **argv){
-	test_init(5);
+	test_init(6);
 	test_add("Parse a simple JSON file", parseSimpleJson);
 	test_add("Parse a package.json file", parsePackageJson);
 	test_add("Cast an application's package.json file to a packageJsonFile_t struct", parseAppPackageJson);
 	test_add("Parse the index.json file", parseIndexJson);
+	test_add("Download a file (working Internet connection is required)", downloadFile);
 	test_add("List locally installed nwjs versions in a simulated environment (note: sudo is required)", listInstalledNwjsVersions);
 	return test_run();
 }

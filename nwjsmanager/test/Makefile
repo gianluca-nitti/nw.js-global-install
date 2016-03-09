@@ -1,7 +1,7 @@
 SHELL=/bin/bash
-SRC=../jsonFile.c ../packageJsonFile.c ../indexJsonFile.c ../paths.c ../nwjsBinaryCache.c
-INCS=-I../lib/src/jsmn-src -I../lib/src/semver.c-src
-LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a
+SRC=../jsonFile.c ../packageJsonFile.c ../indexJsonFile.c ../paths.c ../nwjsBinaryCache.c ../download.c
+INCS=-I../lib/src/jsmn-src -I../lib/src/semver.c-src -I../lib/linux64/curl/include
+LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a -DCURL_STATICLIB $(shell ../lib/linux64/curl/bin/curl-config --static-libs)
 
 .PHONY: all run clean
 
