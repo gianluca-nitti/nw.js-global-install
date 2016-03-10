@@ -23,12 +23,15 @@ fi
 
 echo "Building for linux64..."
 ./configure --prefix=$DEST/linux64/curl $TYPE $FLAGS
-make install
+make -C $SRCDIR/curl-src/lib install
+make -C $SRCDIR/curl-src/include install
 
 echo "Building for linux32..."
 ./configure --prefix=$DEST/linux32/curl $TYPE $FLAGS CFLAGS=-m32
-make install
+make -C $SRCDIR/curl-src/lib install
+make -C $SRCDIR/curl-src/include install
 
 echo "Building for win32..."
 ./configure --prefix=$DEST/win32/curl --host=i686-w64-mingw32 $TYPE $FLAGS
-make install
+make -C $SRCDIR/curl-src/lib install
+make -C $SRCDIR/curl-src/include install
