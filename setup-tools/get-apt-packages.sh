@@ -6,6 +6,7 @@
 dpkg --add-architecture i386
 sed -i -e 's/deb http/deb [arch=amd64] http/' "/etc/apt/sources.list.d/google-chrome.list" #To avoid Travis-CI failure due to Google Chrome not available for i386 (credit: https://www.reddit.com/r/chrome/comments/48oje6/linux_how_to_fix_failed_to_fetch/d0lbqbt)
 apt-get update
+apt-get -y install gdb              # For test debugging (analysis of core dumps)
 apt-get install -y atool            # Tool to automate extraction of tar and zip archives, required by the IUP download script.
 apt-get install -y mingw-w64        # To cross compile for Windows
 apt-get install -y libc6-dev-i386   # To cross compile for Linux x86 from linux x86_64.
