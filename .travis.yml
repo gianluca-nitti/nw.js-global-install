@@ -1,14 +1,7 @@
-language: c
+language: generic
 sudo: required
 dist: trusty
 install:
 - sudo ./setup-tools/get-apt-packages.sh
 - ./setup-tools/setup.sh
-script:
-# Credit for core dump tips: https://github.com/springmeyer/travis-coredump
-- ulimit -c unlimited -S # Enable core dumps
-- echo '/tmp/core_%e.%p' | sudo tee /proc/sys/kernel/core_pattern #Set core dump location; credit: http://stackoverflow.com/a/16048288
-- RESULT=0
-- make || RESULT=$?
-- for i in $(find /tmp/ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/nwjsmanager/test/test core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done;
-- if [[ ${RESULT} != 0 ]]; then exit $RESULT ; fi;
+script: sudo make
