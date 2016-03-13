@@ -21,7 +21,7 @@ LIBS_WIN32=lib/win32/iup/libiup.a -lgdi32 -lcomdlg32 -lcomctl32 -luuid -loleaut3
 LIBS_LINUX32=lib/linux32/iup/libiup.a $(GTK_LIBS) lib/linux32/libjsmn.a lib/linux32/libsemver.a -DCURL_STATICLIB lib/linux32/curl/lib/libcurl.a
 LIBS_LINUX64=lib/linux64/iup/libiup.a $(GTK_LIBS) lib/linux64/libjsmn.a lib/linux64/libsemver.a -DCURL_STATICLIB lib/linux64/curl/lib/libcurl.a
 
-all: win32 linux32 linux64
+all: win32 linux32 linux64 debug
 
 .PHONY: dir ledc win32 linux32 linux64 clean test
 

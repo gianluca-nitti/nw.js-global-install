@@ -1,0 +1,12 @@
+downloaderDlg = dialog[TITLE="Downloading...", ALIGNMENT=ACENTER, MARGIN=10x10, ICON=MAINICON](
+	hbox[ALIGNMENT=ACENTER](
+		fill(),
+		vbox[ALIGNMENT=ACENTER](
+			fill(),
+			label("Downloading file..."),
+			pb = progressbar(),
+			fill()
+		),
+		fill()
+	)
+)
