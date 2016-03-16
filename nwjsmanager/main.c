@@ -46,7 +46,7 @@ static int launch(){
 		semverList_free(&installedVersions);
 		IupOpen(&_argc, &_argv);
 		led_load();
-		downloaderGui_download("http://dl.nwjs.io/v0.12.3/nwjs-symbol-v0.12.3-win-ia32.7z", "test.7z"); //TODO (this is just a random file for testing)
+		downloaderGui_download("http://dl.nwjs.io/v0.12.3/nwjs-symbol-v0.12.3-win-ia32.7z", "test/downloadedFile"); //TODO (this is just a random file for testing)
 		IupClose();
 		return 1;
 	}else{
