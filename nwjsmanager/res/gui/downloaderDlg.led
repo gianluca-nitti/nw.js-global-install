@@ -3,7 +3,11 @@ downloaderDlg = dialog[TITLE="Downloading...", ALIGNMENT=ACENTER, MARGIN=10x10, 
 		vbox(
 			label("Downloading file..."),
 			pb = progressbar[EXPAND=HORIZONTAL](),
-			status = label[EXPAND=HORIZONTAL]("Starting download...")
+			status = label[EXPAND=YES]("Starting download..."),
+			hbox(
+				fill(),
+				cancel = button("Cancel", NULL)
+			)
 		)
 	)
 )
