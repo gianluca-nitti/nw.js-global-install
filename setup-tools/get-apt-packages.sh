@@ -17,6 +17,7 @@ apt-get install -y libtool          # Required to build curl.
 
 #These links are necessary for the cross-compilation from x86_64 Linux to x86 Linux to link the code with the GTK driver and it's dependencies (credit: http://stackoverflow.com/a/20845987)
 ln -sf /lib/i386-linux-gnu/libglib-2.0.so.0 /usr/lib32/libglib-2.0.so
+ln -sf /lib/i386-linux-gnu/libz.so.1 /usr/lib32/libz.so
 ln -sf /usr/lib/i386-linux-gnu/libgtk-x11-2.0.so.0 /usr/lib32/libgtk-x11-2.0.so
 ln -sf /usr/lib/i386-linux-gnu/libgdk-x11-2.0.so.0 /usr/lib32/libgdk-x11-2.0.so
 ln -sf /usr/lib/i386-linux-gnu/libatk-1.0.so.0 /usr/lib32/libatk-1.0.so
@@ -27,3 +28,4 @@ ln -sf /usr/lib/i386-linux-gnu/libgobject-2.0.so.0 /usr/lib32/libgobject-2.0.so
 ln -sf /usr/lib/i386-linux-gnu/libgdk_pixbuf-2.0.so.0 /usr/lib32/libgdk_pixbuf-2.0.so
 ln -sf /usr/lib/i386-linux-gnu/libXext.so.6 /usr/lib32/libXext.so
 ln -sf /usr/lib/i386-linux-gnu/libX11.so.6 /usr/lib32/libX11.so
+ln -s /usr/include/x86_64-linux-gnu/zconf.h /usr/include
