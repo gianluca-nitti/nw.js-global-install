@@ -1,7 +1,7 @@
 SHELL=/bin/bash
-SRC=../jsonFile.c ../packageJsonFile.c ../indexJsonFile.c ../paths.c ../strUtil.c ../nwjsBinaryCache.c ../download.c
+SRC=../jsonFile.c ../packageJsonFile.c ../indexJsonFile.c ../paths.c ../strUtil.c ../nwjsBinaryCache.c ../download.c ../extractArchive.c
 INCS=-I../lib/src/jsmn-src -I../lib/src/semver.c-src -DCURL_STATICLIB -I../lib/linux64/curl/include
-LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a ../lib/linux64/curl/lib/libcurl.a
+LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a ../lib/linux64/curl/lib/libcurl.a -lz
 
 .PHONY: all run clean
 
@@ -11,7 +11,7 @@ test: clean
 	gcc --std=gnu99  -O0 -Wall -Werror main.c test.c $(SRC) $(INCS) $(LIBS) -g -o $@
 
 run: test
-	mkdir -p chroot/var/cache/nwjs/bin/{invalid-name,v0.12.1,v,vinvalid-version,v0.13.0} #Set up chroot environment to simulate some locally installed nw.js versions
+	mkdir -p test-data chroot/var/cache/nwjs/bin/{invalid-name,v0.12.1,v,vinvalid-version,v0.13.0} #Set up chroot environment to simulate some locally installed nw.js versions
 	@echo "Sudo is required to run chroot-based tests. If you don't want to give sudo permissions, you can build without tests with 'cd nwjsmanager && make' from the root of the project."
 	sudo ./$< #Run test
 

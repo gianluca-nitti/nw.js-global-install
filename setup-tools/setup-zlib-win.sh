@@ -8,7 +8,7 @@ SRCDIR=$DIR/../nwjsmanager/lib/src
 mkdir -p $SRCDIR
 cd $SRCDIR
 if [ ! -f ./zlib-src/Makefile ]; then
-	echo "Downloading curl source code..."
+	echo "Downloading zlib source code..."
 	git clone https://github.com/madler/zlib.git zlib-src
 fi
 
