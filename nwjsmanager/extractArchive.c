@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <zlib.h>
 #include "strUtil.h"
-#ifndef _WIN32
+#ifdef _WIN32
+	//TODO
+#else
+	#include <zlib.h>
 	#include "linux-only/untar.h"
 #endif
 #include "extractArchive.h"
@@ -27,8 +29,11 @@ int extractArchive(char *srcFile, char *destDir){
 			fputc(readByte, tarFile);
 		fclose(tarFile);
 		gzclose(tarGzFile);
-		extractTar(tarFilePath, destDir); //TODO:check for errors
+		int exitStatus = extractTar(tarFilePath, destDir);
 		free(tarFilePath);
-		return ARCHIVE_SUCCESS; //TODO
+		if(exitStatus == TAR_SUCCESS)
+			return ARCHIVE_SUCCESS;
+		else
+			return exitStatus;
 	#endif
 }
