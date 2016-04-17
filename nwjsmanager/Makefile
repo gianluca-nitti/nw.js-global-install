@@ -44,19 +44,19 @@ win32: dir ledc
 linux32: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
-	$(CC_LINUX) -m32 res/gui_compiled_linux.c $(SRC) $(INCS_LINUX32) $(LIBS_LINUX32) $(CFLAGS) -o build/$@/$(APPNAME)
+	$(CC_LINUX) -m32 res/gui_compiled_linux.c linux-only/untar.c $(SRC) $(INCS_LINUX32) $(LIBS_LINUX32) $(CFLAGS) -o build/$@/$(APPNAME)
 	$(STRIP_LINUX) build/$@/$(APPNAME)
 
 linux64: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
-	$(CC_LINUX) res/gui_compiled_linux.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) $(CFLAGS) -o build/$@/$(APPNAME)
+	$(CC_LINUX) res/gui_compiled_linux.c linux-only/untar.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) $(CFLAGS) -o build/$@/$(APPNAME)
 	$(STRIP_LINUX) build/$@/$(APPNAME)
 
 debug: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
-	$(CC_LINUX) res/gui_compiled_linux.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) -std=gnu99 -O0 -g -Wall -Werror -o build/$@/$(APPNAME)
+	$(CC_LINUX) res/gui_compiled_linux.c linux-only/untar.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) -std=gnu99 -O0 -g -Wall -Werror -o build/$@/$(APPNAME)
 
 clean:
 	rm -rf build/

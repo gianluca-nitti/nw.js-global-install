@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <zlib.h>
 #include "strUtil.h"
+#ifndef _WIN32
+	#include "linux-only/untar.h"
+#endif
 #include "extractArchive.h"
 
 //Extracts a compressed archive (works with .tar.gz under Linux and with .zip on Windows)
@@ -14,8 +17,8 @@ int extractArchive(char *srcFile, char *destDir){
 			return ARCHIVE_FILE_ACCESS_ERROR;
 		char* tarFilePath = string_concat(2, destDir, ".tar");
 		FILE* tarFile = fopen(tarFilePath, "wb");
-		free(tarFilePath);
 		if(!tarFile){
+			free(tarFilePath);
 			gzclose(tarGzFile);
 			return ARCHIVE_FILE_ACCESS_ERROR;
 		}
@@ -24,6 +27,8 @@ int extractArchive(char *srcFile, char *destDir){
 			fputc(readByte, tarFile);
 		fclose(tarFile);
 		gzclose(tarGzFile);
+		extractTar(tarFilePath, destDir); //TODO:check for errors
+		free(tarFilePath);
 		return ARCHIVE_SUCCESS; //TODO
 	#endif
 }
