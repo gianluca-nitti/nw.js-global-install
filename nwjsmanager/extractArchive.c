@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "strUtil.h"
 #ifdef _WIN32
-	//TODO
+	#include "win-only/unzip.h"
 #else
 	#include <zlib.h>
 	#include "linux-only/untar.h"
@@ -12,7 +12,7 @@
 //Extracts a compressed archive (works with .tar.gz under Linux and with .zip on Windows)
 int extractArchive(char *srcFile, char *destDir){
 	#ifdef _WIN32
-		return 0; //TODO
+		return extractZip(srcFile, destDir);
 	#else
 		gzFile tarGzFile = gzopen(srcFile, "rb");
 		if(!tarGzFile)
