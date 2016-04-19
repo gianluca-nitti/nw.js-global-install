@@ -39,6 +39,7 @@
 #include <sys/stat.h>  /* For mkdir() */
 
 #include "../strUtil.h"
+#include "../extractArchive.h" //for status codes
 #include "untar.h"
 
 char* basePath;
@@ -226,8 +227,8 @@ int extractTar(char *path, char *destPath){
 	basePath = destPath;
 	FILE* a = fopen(path, "rb");
 	if (!a)
-		return TAR_ERROR;
+		return ARCHIVE_ERROR;
 	untar(a, path);
 	fclose(a);
-	return TAR_SUCCESS;
+	return ARCHIVE_SUCCESS;
 }

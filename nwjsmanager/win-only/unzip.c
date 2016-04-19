@@ -9,6 +9,7 @@
 #include <io.h>
 #include "../strUtil.h"
 #include "junzip.h"
+#include "../extractArchive.h" //for status codes
 #include "unzip.h"
 
 char *basePath;
@@ -100,12 +101,12 @@ int recordCallback(JZFile *zip, int idx, JZFileHeader *header, char *filename, v
 int extractZip(char *path, char *destPath) {
     basePath = destPath;
     FILE *fp;
-    int retval = ZIP_ERROR;
+    int retval = ARCHIVE_ERROR;
     JZEndRecord endRecord;
     JZFile *zip;
     if(!(fp = fopen(path, "rb"))) {
         printf("Couldn't open \"%s\"!", path);
-        return ZIP_ERROR;
+        return ARCHIVE_ERROR;
     }
     zip = jzfile_from_stdio_file(fp);
     if(jzReadEndRecord(zip, &endRecord)) {
@@ -118,7 +119,7 @@ int extractZip(char *path, char *destPath) {
     }
     //Alternative method to go through zip after opening it:
     //while(!processFile(zip)) {}
-    retval = ZIP_SUCCESS;
+    retval = ARCHIVE_SUCCESS;
 endClose:
     zip->close(zip);
     return retval;

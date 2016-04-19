@@ -16,13 +16,13 @@ int extractArchive(char *srcFile, char *destDir){
 	#else
 		gzFile tarGzFile = gzopen(srcFile, "rb");
 		if(!tarGzFile)
-			return ARCHIVE_FILE_ACCESS_ERROR;
+			return ARCHIVE_ERROR;
 		char* tarFilePath = string_concat(2, destDir, ".tar");
 		FILE* tarFile = fopen(tarFilePath, "wb");
 		if(!tarFile){
 			free(tarFilePath);
 			gzclose(tarGzFile);
-			return ARCHIVE_FILE_ACCESS_ERROR;
+			return ARCHIVE_ERROR;
 		}
 		int readByte = 0;
 		while((readByte = gzgetc(tarGzFile)) != -1)
@@ -31,9 +31,6 @@ int extractArchive(char *srcFile, char *destDir){
 		gzclose(tarGzFile);
 		int exitStatus = extractTar(tarFilePath, destDir);
 		free(tarFilePath);
-		if(exitStatus == TAR_SUCCESS)
-			return ARCHIVE_SUCCESS;
-		else
-			return exitStatus;
+		return exitStatus;
 	#endif
 }
