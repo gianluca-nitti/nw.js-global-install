@@ -38,7 +38,7 @@ win32: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
 	$(WINDRES) res/res.rc -O coff -o res/resources.obj
-	$(CC_WIN) res/gui_compiled_win.c res/resources.obj win-only/junzip.c win-only/unzip.c $(SRC) $(INCS_WIN32) $(LIBS_WIN32) $(CFLAGS) -Wl,-subsystem,windows -o build/$@/$(APPNAME).exe
+	$(CC_WIN) res/gui_compiled_win.c res/resources.obj win-only/junzip.c win-only/unzip.c $(SRC) $(INCS_WIN32) $(LIBS_WIN32) $(CFLAGS) -mno-ms-bitfields -Wl,-subsystem,windows -o build/$@/$(APPNAME).exe
 	$(STRIP_WIN) build/$@/$(APPNAME).exe
 
 linux32: dir ledc
