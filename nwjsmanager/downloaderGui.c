@@ -1,5 +1,8 @@
 #include <iup.h>
 #include <stdio.h>
+#include "jsonFile.h"
+#include "indexJsonFile.h"
+#include "packageJsonFile.h"
 #include "download.h"
 #include "downloaderGui.h"
 
@@ -32,14 +35,39 @@ void cancelCb(){
 		stop = 1;
 }
 
-int downloaderGui_download(char *url, char *file){
+static void getIndexJson(indexJsonFile_t *out){
+	//TODO
+}
+
+//Downloads und installs the latest supported nw.js version for the specified application.
+int downloaderGui_download(packageJsonFile_t *app){
 	Ihandle* downloaderGui = IupGetHandle("downloaderDlg");
 	pb = IupGetHandle("pb");
 	status = IupGetHandle("status");
-	_url = url;
-	_file = file;
 	IupSetCallback(IupGetHandle("cancel"), "ACTION", (Icallback)cancelCb);
 	IupSetFunction("IDLE_ACTION", downloadCb);
-	IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
+	indexJsonFile_t versionIndex = {};
+	if(indexJson_file_parse("index.json", &versionIndex) != JSON_SUCCESS) //TODO:fix path
+		getIndexJson(&versionIndex);
+	//TODO: check for date and update from repository if it's obsolete.
+	if(versionIndex.nwjsVersionCount != 0){
+		semver_t latestNwVersion = *indexJson_file_get_latest_nwjs_version(&versionIndex);
+		semver_t* launchVersion = NULL;
+		for(int i = 0; i < versionIndex.nwjsVersionCount; i++)
+			if(packageJson_file_is_nw_version_OK(app, versionIndex.nwjsVersions[i].version, latestNwVersion) && (!launchVersion || semver_gt(versionIndex.nwjsVersions[i].version, *launchVersion)))
+				launchVersion = &versionIndex.nwjsVersions[i].version;
+			//else
+			//	printf("[nwjsmanager][DEBUG] Version %d.%d.%d is not compatible.\n", installedVersions.items[i].major, installedVersions.items[i].minor, installedVersions.items[i].patch);
+		if(!launchVersion){
+			printf("ERROR: no compatible nw.js version found!\n"); //TODO
+		}else{
+			printf("[nwjsmanager][DEBUG] Downloading nw.js %d.%d.%d\n", launchVersion->major, launchVersion->minor, launchVersion->patch);
+			//_url = url;
+			//_file = file;
+			IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
+		}
+	}else
+		printf("ERROR: failed to load the nw.js version index!\n"); //TODO: replace with a dialog
+	indexJson_file_free(&versionIndex);
 	return 0; //TODO
 }

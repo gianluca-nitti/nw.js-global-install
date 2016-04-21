@@ -22,7 +22,7 @@ static int indexJson_file_parse_downloads(jsonFile_t *file, int versionTokenInde
 
 //Cast the nwjs version information from the index.json file to a indexJsonFile_t struct.
 int indexJson_file_parse(char *f, indexJsonFile_t *out){
-	jsonFile_t file;
+	jsonFile_t file = {};
 	int result = json_file_parse(f, &file);
 	if(result != JSON_SUCCESS){
 		json_file_free(&file);
@@ -67,6 +67,15 @@ int indexJson_file_parse(char *f, indexJsonFile_t *out){
 	free(nwjs_versions);
 	json_file_free(&file);
 	return result;
+}
+
+//Returns the latest nw.js version according to the specified index.json file.
+semver_t* indexJson_file_get_latest_nwjs_version(indexJsonFile_t *f){
+	semver_t *latestVersion = NULL;
+	for(int i = 0; i < f->nwjsVersionCount; i++)
+		if(!latestVersion || semver_gt(f->nwjsVersions[i].version, *latestVersion))
+			latestVersion = &f->nwjsVersions[i].version;
+	return latestVersion;
 }
 
 static void indexJson_file_free_downloads(nwjsDownload_t *d){

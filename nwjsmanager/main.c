@@ -37,6 +37,7 @@ static int showError(char *msg){
 static int launch(){
 	semver_t* launchVersion = NULL;
 	semverList_t installedVersions = nwjs_binary_cache_get_versions();
+	printf("[nwjsmanager][DEBUG] There are %d nw.js versions installed.\n", installedVersions.count);
 	for(int i = 0; i < installedVersions.count; i++)
 		if(packageJson_file_is_nw_version_OK(app, installedVersions.items[i], latestNwVersion) && (!launchVersion || semver_gt(installedVersions.items[i], *launchVersion)))
 			launchVersion = &installedVersions.items[i];
@@ -46,7 +47,8 @@ static int launch(){
 		semverList_free(&installedVersions);
 		IupOpen(&_argc, &_argv);
 		led_load();
-		downloaderGui_download("http://dl.nwjs.io/v0.12.3/nwjs-symbol-v0.12.3-win-ia32.7z", "test/downloadedFile"); //TODO (this is just a random file for testing)
+		//downloaderGui_download("http://dl.nwjs.io/v0.12.3/nwjs-symbol-v0.12.3-win-ia32.7z", "test/downloadedFile"); //TODO (this is just a random file for testing)
+		downloaderGui_download(app);
 		IupClose();
 		return 1;
 	}else{

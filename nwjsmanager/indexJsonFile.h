@@ -30,6 +30,7 @@ typedef struct{
 }indexJsonFile_t;
 
 int indexJson_file_parse(char *f, indexJsonFile_t *out);
+semver_t* indexJson_file_get_latest_nwjs_version(indexJsonFile_t *f);
 void indexJson_file_free(indexJsonFile_t *f);
 
 #endif
