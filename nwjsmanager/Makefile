@@ -1,6 +1,8 @@
 APPNAME=nwjsmanager
 
 SRC=*.c
+SRC_WINONLY=res/gui_compiled_win.c res/resources.obj win-only/junzip.c win-only/unzip.c win-only/IsWow64.c
+SRC_LINUXONLY=res/gui_compiled_linux.c linux-only/untar.c
 GUIS=./res/gui/*.led
 
 CC_LINUX=gcc
@@ -38,25 +40,25 @@ win32: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
 	$(WINDRES) res/res.rc -O coff -o res/resources.obj
-	$(CC_WIN) res/gui_compiled_win.c res/resources.obj win-only/junzip.c win-only/unzip.c $(SRC) $(INCS_WIN32) $(LIBS_WIN32) $(CFLAGS) -mno-ms-bitfields -Wl,-subsystem,windows -o build/$@/$(APPNAME).exe
+	$(CC_WIN) $(SRC_WINONLY) $(SRC) $(INCS_WIN32) $(LIBS_WIN32) $(CFLAGS) -mno-ms-bitfields -Wl,-subsystem,windows -o build/$@/$(APPNAME).exe
 	$(STRIP_WIN) build/$@/$(APPNAME).exe
 
 linux32: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
-	$(CC_LINUX) -m32 res/gui_compiled_linux.c linux-only/untar.c $(SRC) $(INCS_LINUX32) $(LIBS_LINUX32) $(CFLAGS) -o build/$@/$(APPNAME)
+	$(CC_LINUX) -m32 $(SRC_LINUXONLY) $(SRC) $(INCS_LINUX32) $(LIBS_LINUX32) $(CFLAGS) -o build/$@/$(APPNAME)
 	$(STRIP_LINUX) build/$@/$(APPNAME)
 
 linux64: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
-	$(CC_LINUX) res/gui_compiled_linux.c linux-only/untar.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) $(CFLAGS) -o build/$@/$(APPNAME)
+	$(CC_LINUX) $(SRC_LINUXONLY) $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) $(CFLAGS) -o build/$@/$(APPNAME)
 	$(STRIP_LINUX) build/$@/$(APPNAME)
 
 debug: dir ledc
 	rm -rf build/$@
 	mkdir -p build/$@
-	$(CC_LINUX) res/gui_compiled_linux.c linux-only/untar.c $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) -std=gnu99 -O0 -g -Wall -Werror -o build/$@/$(APPNAME)
+	$(CC_LINUX) $(SRC_LINUXONLY) $(SRC) $(INCS_LINUX64) $(LIBS_LINUX64) -std=gnu99 -O0 -g -Wall -Werror -o build/$@/$(APPNAME)
 
 clean:
 	rm -rf build/
