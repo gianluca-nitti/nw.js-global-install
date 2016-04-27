@@ -30,6 +30,7 @@ int extractArchive(char *srcFile, char *destDir){
 		fclose(tarFile);
 		gzclose(tarGzFile);
 		int exitStatus = extractTar(tarFilePath, destDir);
+		remove(tarFilePath);
 		free(tarFilePath);
 		return exitStatus;
 	#endif

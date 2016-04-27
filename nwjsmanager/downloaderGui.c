@@ -1,7 +1,9 @@
 #include <iup.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "download.h"
+#include "extractArchive.h"
 #include "indexJsonFile.h"
 #include "jsonFile.h"
 #include "packageJsonFile.h"
@@ -9,6 +11,10 @@
 #include "strUtil.h"
 #ifdef _WIN32
 	#include "win-only/IsWow64.h"
+#else
+	#include <dirent.h>
+	#include <fcntl.h>
+	#include <sys/stat.h>
 #endif
 #include "downloaderGui.h"
 
@@ -19,7 +25,9 @@
 
 static Ihandle *pb, *status;
 static char* url;
+static char* versionName;
 int stop = 0;
+int result = -1;
 
 int progressCb(long total, long now, double kBps){
 	double progress = (double)now/(double)total;
@@ -29,10 +37,46 @@ int progressCb(long total, long now, double kBps){
 	return stop;
 }
 
+#ifndef _WIN32
+static void recursiveChmod(char *path, mode_t mode){
+	if(chmod(path, mode))
+		return; //exit if failed to chmod the root
+	DIR *d = opendir(path);
+	if(!d)
+		return;
+	struct dirent *ent;
+	while((ent = readdir(d)) != NULL){
+		if(strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0){
+			char *entPath = string_concat(3, path, "/", ent->d_name);
+			recursiveChmod(entPath, mode);
+			free(entPath);
+		}
+	}
+}
+#endif
+
 int downloadCb(){
 	IupSetFunction("IDLE_ACTION", NULL);
 	char *file = string_concat(2, path_get_nwjs_cache(), "download");
-	download(url, file, progressCb);
+	result = download(url, file, progressCb);
+	if(result == DOWNLOAD_SUCCESS){
+		result = extractArchive(file, path_get_nwjs_cache());
+		remove(file);
+		char *oldName = strrchr(url, '/') + sizeof(char);
+		char *oldNameEnd = strstr(oldName, ".zip");
+		if(!oldNameEnd)
+			oldNameEnd = strstr(oldName, ".tar.gz");
+		*oldNameEnd = '\0';
+		char *oldPath = string_concat(2, path_get_nwjs_cache(), oldName);
+		*oldNameEnd = '.';
+		char *newPath = string_concat(2, path_get_nwjs_cache(), versionName);
+		rename(oldPath, newPath);
+		free(oldPath);
+		#ifndef _WIN32
+			recursiveChmod(newPath, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IXOTH);
+		#endif
+		free(newPath);
+	}
 	free(file);
 	return IUP_CLOSE;
 }
@@ -68,6 +112,8 @@ int downloaderGui_download(packageJsonFile_t *app){
 			printf("ERROR: no compatible nw.js version found!\n"); //TODO
 		}else{
 			printf("[nwjsmanager][DEBUG] Downloading nw.js %d.%d.%d\n", launchVersion->version.major, launchVersion->version.minor, launchVersion->version.patch);
+			versionName = malloc(255); //Using 255 as max length (see https://github.com/mojombo/semver/blob/master/semver.md#does-semver-have-a-size-limit-on-the-version-string)
+			sprintf(versionName, "v%d.%d.%d", launchVersion->version.major, launchVersion->version.minor, launchVersion->version.patch);
 			nwjsDownload_t *downloads = &launchVersion->defaultDownloads;
 			//TODO: use sdk or nacl build when required.
 			#ifdef _WIN32
@@ -86,6 +132,7 @@ int downloaderGui_download(packageJsonFile_t *app){
 			#endif
 			IupSetFunction("IDLE_ACTION", downloadCb);
 			IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
+			free(versionName);
 		}
 	}else
 		printf("ERROR: failed to load the nw.js version index!\n"); //TODO: replace with a dialog
