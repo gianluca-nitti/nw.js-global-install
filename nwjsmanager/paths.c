@@ -1,6 +1,6 @@
 #include <string.h>
 #ifdef _WIN32
-#include <shlobj.h>
+	#include <shlobj.h>
 #endif
 #include "paths.h"
 

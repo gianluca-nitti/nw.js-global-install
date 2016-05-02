@@ -55,7 +55,9 @@ static int launch(){
 		printf("[nwjsmanager][DEBUG] Launching %s with nw.js v%d.%d.%d.\n", app->name, launchVersion->major, launchVersion->minor, launchVersion->patch);
 		char binDirName[256];
 		sprintf(binDirName, "v%d.%d.%d/", launchVersion->major, launchVersion->minor, launchVersion->patch);
-		char *binPath = string_concat(3, path_get_nwjs_cache(), binDirName, NWJS_BIN_NAME);
+		char *binCachePath = path_get_nwjs_cache();
+		char *binPath = string_concat(3, binCachePath, binDirName, NWJS_BIN_NAME);
+		free(binCachePath);
 		printf("[nwjsmanager][DEBUG] Nw.js binary path: %s.\n", binPath);
 		char **args = calloc(_argc + 2, sizeof(char*));
 		args[0] = binPath;

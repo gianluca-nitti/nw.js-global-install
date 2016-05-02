@@ -3,6 +3,6 @@
 
 #include "packageJsonFile.h"
 
-int downloaderGui_download(packageJsonFile_t *app);
+int downloaderGui_download(packageJsonFile_t *_app);
 
 #endif

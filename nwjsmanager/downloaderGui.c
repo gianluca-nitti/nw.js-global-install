@@ -9,23 +9,16 @@
 #include "packageJsonFile.h"
 #include "paths.h"
 #include "strUtil.h"
+#include "utils.h"
 #ifdef _WIN32
 	#include "win-only/IsWow64.h"
 #else
-	#include <dirent.h>
 	#include <fcntl.h>
-	#include <sys/stat.h>
 #endif
 #include "downloaderGui.h"
 
-/*static int downloaderGui_close(Ihandle *btn){
-	IupHide(IupGetDialog(btn));
-	return IUP_DEFAULT;
-}*/
-
 static Ihandle *pb, *status;
-static char* url;
-static char* versionName;
+static packageJsonFile_t *app;
 int stop = 0;
 int result = -1;
 
@@ -37,68 +30,28 @@ int progressCb(long total, long now, double kBps){
 	return stop;
 }
 
-#ifndef _WIN32
-static void recursiveChmod(char *path, mode_t mode){
-	if(chmod(path, mode))
-		return; //exit if failed to chmod the root
-	DIR *d = opendir(path);
-	if(!d)
-		return;
-	struct dirent *ent;
-	while((ent = readdir(d)) != NULL){
-		if(strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0){
-			char *entPath = string_concat(3, path, "/", ent->d_name);
-			recursiveChmod(entPath, mode);
-			free(entPath);
-		}
-	}
+int genericCb(long total, long now, double kBps){
+	IupLoopStep();
+	return 0;
 }
-#endif
+
+static void getIndexJson(char *indexJsonPath, indexJsonFile_t *out){
+	if(download(INDEXJSON_URL, indexJsonPath, genericCb) != DOWNLOAD_SUCCESS){
+		printf("[nwjsmanager][DEBUG] Failed to download versio index at URL '%s' !\n", INDEXJSON_URL);
+		return;
+	}
+	indexJson_file_parse(indexJsonPath, out);
+}
 
 int downloadCb(){
 	IupSetFunction("IDLE_ACTION", NULL);
-	char *file = string_concat(2, path_get_nwjs_cache(), "download");
-	result = download(url, file, progressCb);
-	if(result == DOWNLOAD_SUCCESS){
-		result = extractArchive(file, path_get_nwjs_cache());
-		remove(file);
-		char *oldName = strrchr(url, '/') + sizeof(char);
-		char *oldNameEnd = strstr(oldName, ".zip");
-		if(!oldNameEnd)
-			oldNameEnd = strstr(oldName, ".tar.gz");
-		*oldNameEnd = '\0';
-		char *oldPath = string_concat(2, path_get_nwjs_cache(), oldName);
-		*oldNameEnd = '.';
-		char *newPath = string_concat(2, path_get_nwjs_cache(), versionName);
-		rename(oldPath, newPath);
-		free(oldPath);
-		#ifndef _WIN32
-			recursiveChmod(newPath, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IXOTH);
-		#endif
-		free(newPath);
-	}
-	free(file);
-	return IUP_CLOSE;
-}
-
-void cancelCb(){
-	if(IupAlarm("nwjsmanager", "If you stop the download of the nw.js runtime files, you won't be able to run the application.\nAre you sure?", "Yes", "No", NULL) == 1)
-		stop = 1;
-}
-
-static void getIndexJson(indexJsonFile_t *out){
-	//TODO
-}
-
-//Downloads und installs the latest supported nw.js version for the specified application.
-int downloaderGui_download(packageJsonFile_t *app){
-	Ihandle *downloaderGui = IupGetHandle("downloaderDlg");
-	pb = IupGetHandle("pb");
-	status = IupGetHandle("status");
-	IupSetCallback(IupGetHandle("cancel"), "ACTION", (Icallback)cancelCb);
+	IupLoopStep();
+	char *cachePath = path_get_nwjs_cache();
+	char *indexJsonPath = string_concat(2, cachePath, "../index.json");
+	recursiveMkdir(cachePath, 0755); //Create directories if they don't already exist
 	indexJsonFile_t versionIndex = {};
-	if(indexJson_file_parse("index.json", &versionIndex) != JSON_SUCCESS) //TODO:fix path
-		getIndexJson(&versionIndex);
+	if(indexJson_file_parse(indexJsonPath, &versionIndex) != JSON_SUCCESS)
+		getIndexJson(indexJsonPath, &versionIndex);
 	//TODO: check for date and update from repository if it's obsolete.
 	if(versionIndex.nwjsVersionCount != 0){
 		semver_t latestNwVersion = *indexJson_file_get_latest_nwjs_version(&versionIndex);
@@ -106,15 +59,14 @@ int downloaderGui_download(packageJsonFile_t *app){
 		for(int i = 0; i < versionIndex.nwjsVersionCount; i++)
 			if(packageJson_file_is_nw_version_OK(app, versionIndex.nwjsVersions[i].version, latestNwVersion) && (!launchVersion || semver_gt(versionIndex.nwjsVersions[i].version, launchVersion->version)))
 				launchVersion = &versionIndex.nwjsVersions[i];
-			//else
-			//	printf("[nwjsmanager][DEBUG] Version %d.%d.%d is not compatible.\n", installedVersions.items[i].major, installedVersions.items[i].minor, installedVersions.items[i].patch);
 		if(!launchVersion){
 			printf("ERROR: no compatible nw.js version found!\n"); //TODO
 		}else{
 			printf("[nwjsmanager][DEBUG] Downloading nw.js %d.%d.%d\n", launchVersion->version.major, launchVersion->version.minor, launchVersion->version.patch);
-			versionName = malloc(255); //Using 255 as max length (see https://github.com/mojombo/semver/blob/master/semver.md#does-semver-have-a-size-limit-on-the-version-string)
+			char *versionName = malloc(255); //Using 255 as max length (see https://github.com/mojombo/semver/blob/master/semver.md#does-semver-have-a-size-limit-on-the-version-string)
 			sprintf(versionName, "v%d.%d.%d", launchVersion->version.major, launchVersion->version.minor, launchVersion->version.patch);
 			nwjsDownload_t *downloads = &launchVersion->defaultDownloads;
+			char *url;
 			//TODO: use sdk or nacl build when required.
 			#ifdef _WIN32
 				//Actually on Windows only a 32-bit binary is distributed since it will work out-of-the box thanks to Wow64. The IsWow64 function (see win-only/IsWow64.c) is used to detect at runtime if we are on a 64-bit system and properly select the nw.js architecture.
@@ -130,12 +82,52 @@ int downloaderGui_download(packageJsonFile_t *app){
 					url = downloads->linux32;
 				#endif
 			#endif
-			IupSetFunction("IDLE_ACTION", downloadCb);
-			IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
+			char *file = string_concat(2, cachePath, "download");
+			result = download(url, file, progressCb);
+			if(result == DOWNLOAD_SUCCESS){
+				result = extractArchive(file, cachePath);
+				remove(file);
+				char *oldName = strrchr(url, '/') + sizeof(char);
+				char *oldNameEnd = strstr(oldName, ".zip");
+				if(!oldNameEnd)
+					oldNameEnd = strstr(oldName, ".tar.gz");
+				*oldNameEnd = '\0';
+				char *oldPath = string_concat(2, cachePath, oldName);
+				*oldNameEnd = '.';
+				char *newPath = string_concat(2, cachePath, versionName);
+				rename(oldPath, newPath);
+				free(oldPath);
+				#ifndef _WIN32
+					recursiveChmod(newPath, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IXOTH);
+				#endif
+				free(newPath);
+			}
+			free(file);
 			free(versionName);
 		}
 	}else
 		printf("ERROR: failed to load the nw.js version index!\n"); //TODO: replace with a dialog
 	indexJson_file_free(&versionIndex);
+	free(indexJsonPath);
+	free(cachePath);
+	return IUP_CLOSE;
+}
+
+void cancelCb(){
+	if(IupAlarm("nwjsmanager", "If you stop the download of the nw.js runtime files, you won't be able to run the application.\nAre you sure?", "Yes", "No", NULL) == 1)
+		stop = 1;
+}
+
+
+
+//Downloads und installs the latest supported nw.js version for the specified application.
+int downloaderGui_download(packageJsonFile_t *_app){
+	Ihandle *downloaderGui = IupGetHandle("downloaderDlg");
+	pb = IupGetHandle("pb");
+	status = IupGetHandle("status");
+	IupSetCallback(IupGetHandle("cancel"), "ACTION", (Icallback)cancelCb);
+	app = _app;
+	IupSetFunction("IDLE_ACTION", downloadCb);
+	IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
 	return 0; //TODO
 }
