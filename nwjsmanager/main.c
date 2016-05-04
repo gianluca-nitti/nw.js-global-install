@@ -47,10 +47,12 @@ static int launch(){
 		semverList_free(&installedVersions);
 		IupOpen(&_argc, &_argv);
 		led_load();
-		//downloaderGui_download("http://dl.nwjs.io/v0.12.3/nwjs-symbol-v0.12.3-win-ia32.7z", "test/downloadedFile"); //TODO (this is just a random file for testing)
-		downloaderGui_download(app);
+		int result = downloaderGui_download(app);
 		IupClose();
-		return 1;
+		if(result == DOWNLOADERGUI_SUCCESS)
+			return launch(); //Recursively call this function, because now the correct nw.js version has been downloaded.
+		else
+			return 1; //This is returned to main, and thus will be the exit code.
 	}else{
 		printf("[nwjsmanager][DEBUG] Launching %s with nw.js v%d.%d.%d.\n", app->name, launchVersion->major, launchVersion->minor, launchVersion->patch);
 		char binDirName[256];

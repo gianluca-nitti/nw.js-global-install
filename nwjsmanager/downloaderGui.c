@@ -20,7 +20,7 @@
 static Ihandle *pb, *status;
 static packageJsonFile_t *app;
 int stop = 0;
-int result = -1;
+int globalResult = DOWNLOADERGUI_ERROR;
 
 int progressCb(long total, long now, double kBps){
 	double progress = (double)now/(double)total;
@@ -60,7 +60,7 @@ int downloadCb(){
 			if(packageJson_file_is_nw_version_OK(app, versionIndex.nwjsVersions[i].version, latestNwVersion) && (!launchVersion || semver_gt(versionIndex.nwjsVersions[i].version, launchVersion->version)))
 				launchVersion = &versionIndex.nwjsVersions[i];
 		if(!launchVersion){
-			printf("ERROR: no compatible nw.js version found!\n"); //TODO
+			IupMessage(app->name, "Error: no nw.js version compatible with the application was found. Please try to reinstall the application, or contact the developer if the problem persists.");
 		}else{
 			printf("[nwjsmanager][DEBUG] Downloading nw.js %d.%d.%d\n", launchVersion->version.major, launchVersion->version.minor, launchVersion->version.patch);
 			char *versionName = malloc(255); //Using 255 as max length (see https://github.com/mojombo/semver/blob/master/semver.md#does-semver-have-a-size-limit-on-the-version-string)
@@ -83,7 +83,7 @@ int downloadCb(){
 				#endif
 			#endif
 			char *file = string_concat(2, cachePath, "download");
-			result = download(url, file, progressCb);
+			int result = download(url, file, progressCb);
 			if(result == DOWNLOAD_SUCCESS){
 				result = extractArchive(file, cachePath);
 				remove(file);
@@ -101,12 +101,13 @@ int downloadCb(){
 					recursiveChmod(newPath, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IXOTH);
 				#endif
 				free(newPath);
+				globalResult = DOWNLOADERGUI_SUCCESS;
 			}
 			free(file);
 			free(versionName);
 		}
 	}else
-		printf("ERROR: failed to load the nw.js version index!\n"); //TODO: replace with a dialog
+		IupMessage(app->name, "Error: this application requires the nw.js runtime, but a suitable version of the runtime files isn't installed. An attempt was done to download it, but it wasn't possible to retrive the version index.\nPlease check your Internet connection (this is necessary only for the first run of the application). Also, be sure the current user is allowed to write to the nw.js binary cache directory.");
 	indexJson_file_free(&versionIndex);
 	free(indexJsonPath);
 	free(cachePath);
@@ -129,5 +130,5 @@ int downloaderGui_download(packageJsonFile_t *_app){
 	app = _app;
 	IupSetFunction("IDLE_ACTION", downloadCb);
 	IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
-	return 0; //TODO
+	return globalResult; //TODO
 }

@@ -3,6 +3,9 @@
 
 #include "packageJsonFile.h"
 
+#define DOWNLOADERGUI_SUCCESS 0
+#define DOWNLOADERGUI_ERROR -1
+
 int downloaderGui_download(packageJsonFile_t *_app);
 
 #endif
