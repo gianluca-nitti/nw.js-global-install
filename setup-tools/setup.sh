@@ -4,5 +4,5 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/setup-jsmn.sh
 source $DIR/setup-semver.sh
 source $DIR/setup-iup.sh
-source $DIR/setup-win.sh
+source $DIR/setup-zlib.sh
 source $DIR/setup-curl-httponly.sh
