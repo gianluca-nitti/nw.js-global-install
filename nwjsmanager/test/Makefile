@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 SRC=../jsonFile.c ../packageJsonFile.c ../indexJsonFile.c ../paths.c ../strUtil.c ../nwjsBinaryCache.c ../download.c ../linux-only/untar.c ../extractArchive.c
-INCS=-I../lib/src/jsmn-src -I../lib/src/semver.c-src -DCURL_STATICLIB -I../lib/linux64/curl/include
+INCS=-I../lib/src/jsmn-src -I../lib/src/semver.c-src -DCURL_STATICLIB -I../lib/linux64/curl/include -I../lib/linux64/zlib/include
 LIBS=../lib/linux64/libjsmn.a ../lib/linux64/libsemver.a ../lib/linux64/curl/lib/libcurl.a ../lib/linux64/zlib/lib/libz.a
 
 .PHONY: all run clean
