@@ -25,6 +25,7 @@ export CC="gcc -m32"
 ./configure --static --prefix=$DEST/linux32/zlib
 make install
 make clean
+unset CC
 
 echo "Building for win32..."
 patch win32/Makefile.gcc $DIR/zlibMakefile.patch
