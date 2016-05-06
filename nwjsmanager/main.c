@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <iup.h>
 #include <unistd.h>
 #include "jsonFile.h"
@@ -51,8 +52,15 @@ static int launch(){
 		IupClose();
 		if(result == DOWNLOADERGUI_SUCCESS)
 			return launch(); //Recursively call this function, because now the correct nw.js version has been downloaded.
-		else
+		else{
+			freeGlobals();
 			return 1; //This is returned to main, and thus will be the exit code.
+		}
+	}else if(_argc > 2 && strcmp(_argv[2], "--nwjsmanager-prepare") == 0){
+		//If --nwjsmanager-prepare is passed as 2nd argument (after package.json path), the application won't be launched (will be used by the installation scripts, where nwjsmanager is started only to setup the correct nw.js version for the application).
+		printf("[nwjsmanager][DEBUG] %s will be launched with nw.js v%d.%d.%d.\n", app->name, launchVersion->major, launchVersion->minor, launchVersion->patch);
+		freeGlobals();
+		return 0;
 	}else{
 		printf("[nwjsmanager][DEBUG] Launching %s with nw.js v%d.%d.%d.\n", app->name, launchVersion->major, launchVersion->minor, launchVersion->patch);
 		char binDirName[256];
@@ -70,6 +78,7 @@ static int launch(){
 			args[1] = string_concat(3, "\"", args[1], "\""); //Enclosing path to the application's directory in quotes under Windows, to avoid it to be treated as multiple arguments if it contains spaces
 		#endif
 		args[_argc + 1] = NULL;
+		freeGlobals();
 		return execv(binPath, args); //TODO: manage errors
 	}
 }
