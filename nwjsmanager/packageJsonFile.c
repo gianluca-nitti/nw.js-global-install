@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 //#include <semver.h> //in the stable version of semver.c, semver.h doesn't have a proper include guard, so it's included only once inside packageJsonFile.h
@@ -23,10 +22,9 @@ int packageJson_file_parse(char *f, packageJsonFile_t *out){
 		return PACKAGEJSON_PARSE_ERROR_NAME;
 	}
 	int nwjsmanager_root_token = json_file_get_token_index(&file, "nwjsmanager", 0);
-	if(nwjsmanager_root_token == JSON_ERROR || nwjsmanager_root_token == file.tokenCount){
+	if(nwjsmanager_root_token == JSON_ERROR || nwjsmanager_root_token == file.tokenCount)
 		out->versionFilter = NULL;
-		out->forceLatest = false;
-	}else{
+	else{
 		char *versionFilter = json_file_get_value_from_key(&file, "nwjs-version-filter", nwjsmanager_root_token + 1);
 		if(versionFilter){
 			if(is_semver_operator(versionFilter[0])){
@@ -47,11 +45,6 @@ int packageJson_file_parse(char *f, packageJsonFile_t *out){
 			free(versionFilter);
 		}else
 			out->versionFilter = NULL;
-		int forceLatest = json_file_get_token_index(&file, "force-latest", nwjsmanager_root_token + 1);
-		if(json_file_token_is_boolean(&file, forceLatest + 1))
-			out->forceLatest = json_file_get_token_value_boolean(&file, forceLatest + 1);
-		else
-			out->forceLatest = false;
 	}
 	json_file_free(&file);
 	return result;
@@ -69,13 +62,7 @@ void packageJson_file_free(packageJsonFile_t *f){
 	}
 }
 
-//Check if the application associated with the provided package.json supports the provided NW.JS version. The last argument is necessary to check for the "forceLatest" requirement.
-int packageJson_file_is_nw_version_OK(packageJsonFile_t *f, semver_t nwVersion, semver_t latestNwVersion){
-	if(!f->versionFilter)
-		if(!f->forceLatest || semver_compare(nwVersion, latestNwVersion) == 0)
-			return true;
-	if(semver_satisfies(nwVersion, *f->versionFilter, f->versionFilterOperator))
-		if(!f->forceLatest || semver_compare(nwVersion, latestNwVersion) == 0)
-			return true;
-	return false;
+//Check if the application associated with the provided package.json supports the provided NW.JS version.
+int packageJson_file_is_nw_version_OK(packageJsonFile_t *f, semver_t nwVersion){
+	return !f->versionFilter || semver_satisfies(nwVersion, *f->versionFilter, f->versionFilterOperator);
 }

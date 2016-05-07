@@ -54,10 +54,9 @@ int downloadCb(){
 		getIndexJson(indexJsonPath, &versionIndex);
 	//TODO: check for date and update from repository if it's obsolete.
 	if(versionIndex.nwjsVersionCount != 0){
-		semver_t latestNwVersion = *indexJson_file_get_latest_nwjs_version(&versionIndex);
 		nwjsVersion_t *launchVersion = NULL;
 		for(int i = 0; i < versionIndex.nwjsVersionCount; i++)
-			if(packageJson_file_is_nw_version_OK(app, versionIndex.nwjsVersions[i].version, latestNwVersion) && (!launchVersion || semver_gt(versionIndex.nwjsVersions[i].version, launchVersion->version)))
+			if(packageJson_file_is_nw_version_OK(app, versionIndex.nwjsVersions[i].version) && (!launchVersion || semver_gt(versionIndex.nwjsVersions[i].version, launchVersion->version)))
 				launchVersion = &versionIndex.nwjsVersions[i];
 		if(!launchVersion){
 			IupMessage(app->name, "Error: no nw.js version compatible with the application was found. Please try to reinstall the application, or contact the developer if the problem persists.");
