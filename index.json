@@ -27,24 +27,37 @@
 			}
 		}, {
 			"version": "0.13.0",
-			"beta": true,
 			"default": {
-				"linux32": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-v0.13.0-beta7-linux-ia32.tar.gz",
-				"linux64": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-v0.13.0-beta7-linux-x64.tar.gz",
-				"win32": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-v0.13.0-beta7-win-ia32.zip",
-				"win64": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-v0.13.0-beta7-win-x64.zip"
+				"linux32": "http://dl.nwjs.io/v0.13.0/nwjs-v0.13.0-linux-ia32.tar.gz",
+				"linux64": "http://dl.nwjs.io/v0.13.0/nwjs-v0.13.0-linux-x64.tar.gz",
+				"win32": "http://dl.nwjs.io/v0.13.0/nwjs-v0.13.0-win-ia32.zip",
+				"win64": "http://dl.nwjs.io/v0.13.0/nwjs-v0.13.0-win-x64.zip"
 			},
 			"nacl": {
-				"linux32": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-nacl-v0.13.0-beta7-linux-ia32.tar.gz",
-				"linux64": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-nacl-v0.13.0-beta7-linux-x64.tar.gz",
-				"win32": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-nacl-v0.13.0-beta7-win-ia32.zip",
-				"win64": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-nacl-v0.13.0-beta7-win-x64.zip"
+				"linux32": "http://dl.nwjs.io/v0.13.0/nwjs-nacl-v0.13.0-linux-ia32.tar.gz",
+				"linux64": "http://dl.nwjs.io/v0.13.0/nwjs-nacl-v0.13.0-linux-x64.tar.gz",
+				"win32": "http://dl.nwjs.io/v0.13.0/nwjs-nacl-v0.13.0-win-ia32.zip",
+				"win64": "http://dl.nwjs.io/v0.13.0/nwjs-nacl-v0.13.0-win-x64.zip"
 			},
 			"sdk": {
-				"linux32": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-sdk-v0.13.0-beta7-linux-ia32.tar.gz",
-				"linux64": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-sdk-v0.13.0-beta7-linux-x64.tar.gz",
-				"win32": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-sdk-v0.13.0-beta7-win-ia32.zip",
-				"win64": "http://dl.nwjs.io/v0.13.0-beta7/nwjs-sdk-v0.13.0-beta7-win-x64.zip"
+				"linux32": "http://dl.nwjs.io/v0.13.0/nwjs-sdk-v0.13.0-linux-ia32.tar.gz",
+				"linux64": "http://dl.nwjs.io/v0.13.0/nwjs-sdk-v0.13.0-linux-x64.tar.gz",
+				"win32": "http://dl.nwjs.io/v0.13.0/nwjs-sdk-v0.13.0-win-ia32.zip",
+				"win64": "http://dl.nwjs.io/v0.13.0/nwjs-sdk-v0.13.0-win-x64.zip"
+			}
+		}, {
+			"version": "0.14.4",
+			"default": {
+				"linux32": "http://dl.nwjs.io/v0.14.0/nwjs-v0.14.0-linux-ia32.tar.gz",
+				"linux64": "http://dl.nwjs.io/v0.14.0/nwjs-v0.14.0-linux-x64.tar.gz",
+				"win32": "http://dl.nwjs.io/v0.14.0/nwjs-v0.14.0-win-ia32.zip",
+				"win64": "http://dl.nwjs.io/v0.14.0/nwjs-v0.14.0-win-x64.zip"
+			},
+			"sdk": {
+				"linux32": "http://dl.nwjs.io/v0.14.0/nwjs-sdk-v0.14.0-linux-ia32.tar.gz",
+				"linux64": "http://dl.nwjs.io/v0.14.0/nwjs-sdk-v0.14.0-linux-x64.tar.gz",
+				"win32": "http://dl.nwjs.io/v0.14.0/nwjs-sdk-v0.14.0-win-ia32.zip",
+				"win64": "http://dl.nwjs.io/v0.14.0/nwjs-sdk-v0.14.0-win-x64.zip"
 			}
 		}
 	]
