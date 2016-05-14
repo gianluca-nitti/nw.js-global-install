@@ -10,6 +10,7 @@
 #include "../nwjsBinaryCache.h"
 #include "../download.h"
 #include "../extractArchive.h"
+#include "../update.h"
 
 int parseSimpleJson(){
 	jsonFile_t f;
@@ -99,7 +100,7 @@ int parseIndexJson(){
 		indexJson_file_free(&indexJson);
 		return 0;
 	}
-	result = indexJson.nwjsmanagerLatestVersion.major == 1 && indexJson.nwjsmanagerLatestVersion.minor == 0 && indexJson.nwjsmanagerLatestVersion.patch == 0;
+	result = indexJson.nwjsmanagerLatestVersion.major == 1 && indexJson.nwjsmanagerLatestVersion.minor == 0 && indexJson.nwjsmanagerLatestVersion.patch == 0 && indexJson.nwjsmanagerUrgentUpdate;
 	for(int i = 0; i < indexJson.nwjsVersionCount; i++){
 		if(indexJson.nwjsVersions[i].version.major == 0 && indexJson.nwjsVersions[i].version.minor == 12)
 			result &= indexJson.nwjsVersions[i].defaultDownloads.linux64 != NULL && indexJson.nwjsVersions[i].naclDownloads.win32 == NULL && indexJson.nwjsVersions[i].sdkDownloads.win32 == NULL;
@@ -141,14 +142,28 @@ int extract(){
 	return extractArchive("test-data/downloadedFile", "test-data/extractDir") == ARCHIVE_SUCCESS;
 }
 
+int update(){
+	indexJsonFile_t testIndexJson;
+	int result = indexJson_file_parse("testIndex.json", &testIndexJson);
+	if(result != JSON_SUCCESS){
+		indexJson_file_free(&testIndexJson);
+		return 0;
+	}
+	result = update_required(&testIndexJson);
+	update_install(&testIndexJson, downloadCb);
+	indexJson_file_free(&testIndexJson);
+	return result;
+}
+
 int main(int argc, char **argv){
-	test_init(7);
+	test_init(8);
 	test_add("Parse a simple JSON file", parseSimpleJson);
 	test_add("Parse a package.json file", parsePackageJson);
 	test_add("Cast an application's package.json file to a packageJsonFile_t struct", parseAppPackageJson);
 	test_add("Parse the index.json file", parseIndexJson);
 	test_add("Download a file (working Internet connection is required)", downloadFile);
 	test_add("Extract an archive (.tar.gz on Linux, .zip on Windows) (requires the previous test was passed)", extract);
+	test_add("Simulate an update", update);
 	test_add("List locally installed nwjs versions in a simulated environment (note: sudo is required)", listInstalledNwjsVersions);
 	return test_run();
 }

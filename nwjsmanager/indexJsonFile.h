@@ -25,6 +25,7 @@ typedef struct{
 
 typedef struct{
 	semver_t nwjsmanagerLatestVersion;
+	bool nwjsmanagerUrgentUpdate;
 	int nwjsVersionCount;
 	nwjsVersion_t *nwjsVersions;
 }indexJsonFile_t;

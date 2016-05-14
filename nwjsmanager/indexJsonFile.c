@@ -28,6 +28,7 @@ int indexJson_file_parse(char *f, indexJsonFile_t *out){
 		json_file_free(&file);
 		return result;
 	}
+	//Parse nwjsmanager update information.
 	char *nwjsmanagerLatestVersion = json_file_get_value_from_key(&file, "nwjsmanager-latest-version", 0);
 	if(!nwjsmanagerLatestVersion){
 		json_file_free(&file);
@@ -39,6 +40,9 @@ int indexJson_file_parse(char *f, indexJsonFile_t *out){
 		return INDEXJSON_ERROR_NWJSMANAGER_VERSION;
 	}
 	free(nwjsmanagerLatestVersion);
+	int urgentDownloadToken = json_file_get_subtoken_abs_index(&file, json_file_get_token_index(&file, "nwjsmanager-update-urgent", 0), 0);
+	out->nwjsmanagerUrgentUpdate = urgentDownloadToken != JSON_ERROR && json_file_get_token_value_boolean(&file, urgentDownloadToken);
+	//Parse nw.js version list.
 	int nwjs_versions_root_token = json_file_get_subtoken_abs_index(&file, json_file_get_token_index(&file, "nwjs-version-index", 0), 0);
 	if(nwjs_versions_root_token == JSON_ERROR){
 		json_file_free(&file);
@@ -67,15 +71,6 @@ int indexJson_file_parse(char *f, indexJsonFile_t *out){
 	free(nwjs_versions);
 	json_file_free(&file);
 	return result;
-}
-
-//Returns the latest nw.js version according to the specified index.json file.
-semver_t* indexJson_file_get_latest_nwjs_version(indexJsonFile_t *f){
-	semver_t *latestVersion = NULL;
-	for(int i = 0; i < f->nwjsVersionCount; i++)
-		if(!latestVersion || semver_gt(f->nwjsVersions[i].version, *latestVersion))
-			latestVersion = &f->nwjsVersions[i].version;
-	return latestVersion;
 }
 
 static void indexJson_file_free_downloads(nwjsDownload_t *d){

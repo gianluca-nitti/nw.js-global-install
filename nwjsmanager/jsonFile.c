@@ -116,7 +116,7 @@ int json_file_get_token_index(jsonFile_t *f, char *key, int root){
 
 //Check if the specified token, n-th child of root, exists and return its absolute index
 int json_file_get_subtoken_abs_index(jsonFile_t *f, int root, int n){
-	if(!f || root >= f->tokenCount || n >= f->tokens[root].size)
+	if(!f || root < 0 || root >= f->tokenCount || n >= f->tokens[root].size)
 		return JSON_ERROR;
 	return root + n + 1;
 }
