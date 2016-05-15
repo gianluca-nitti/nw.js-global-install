@@ -45,13 +45,15 @@ size_t getBinaryPathBuffer(char *buf, int bufLen){
 //Returns an absolute path to the directory in which the applauncher's executable is stored.
 char *getBinaryPath(){
 	int len = 0;
+	int finalLen = 0;
 	char *binPath = NULL;
 	do{ //The loop is to ensure that the string buffer we're allocating (binPath) is large enough to contain all the path (see http://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html for information about pathname maximum size).
-		len += 1024;
+		len += 2;
 		if(binPath)
 			free(binPath);
 		binPath = malloc(len*sizeof(char));
-	}while(getBinaryPathBuffer(binPath, len) >= len);
+	}while((finalLen = getBinaryPathBuffer(binPath, len)) >= len);
+	binPath[finalLen] = '\0';
 	return binPath;
 }
 

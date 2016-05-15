@@ -1,6 +1,7 @@
 applauncher/build/
 applauncher/resources.obj
 nwjsmanager/test/test
+nwjsmanager/test/test.old
 nwjsmanager/test/test-data
 nwjsmanager/test/win/testZip.exe
 nwjsmanager/build/

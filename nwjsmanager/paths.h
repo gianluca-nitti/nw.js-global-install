@@ -10,5 +10,7 @@
 #endif
 
 char* path_get_nwjs_cache();
+char *getBinaryPath();
+char *getParentDirectory(char *filePath);
 
 #endif

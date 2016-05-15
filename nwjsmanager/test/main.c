@@ -11,6 +11,7 @@
 #include "../download.h"
 #include "../extractArchive.h"
 #include "../update.h"
+#include "../paths.h"
 
 int parseSimpleJson(){
 	jsonFile_t f;
@@ -150,10 +151,19 @@ int update(){
 		return 0;
 	}
 	result = update_required(&testIndexJson);
-	update_install(&testIndexJson, downloadCb);
+	update_install(&testIndexJson, downloadCb, NULL);
 	indexJson_file_free(&testIndexJson);
 	return result;
 }
+
+/*int getParentDir(){
+	char *s = getParentDirectory("/usr/bin/foo/bar");
+	if(!s)
+		return 0;
+	int result = strcmp(s, "/usr/bin/foo") == 0;
+	free(s);
+	return result;
+}*/
 
 int main(int argc, char **argv){
 	test_init(8);
@@ -163,6 +173,7 @@ int main(int argc, char **argv){
 	test_add("Parse the index.json file", parseIndexJson);
 	test_add("Download a file (working Internet connection is required)", downloadFile);
 	test_add("Extract an archive (.tar.gz on Linux, .zip on Windows) (requires the previous test was passed)", extract);
+	//Change number if uncommenting //test_add("Get the parent directory of a file", getParentDir);
 	test_add("Simulate an update", update);
 	test_add("List locally installed nwjs versions in a simulated environment (note: sudo is required)", listInstalledNwjsVersions);
 	return test_run();

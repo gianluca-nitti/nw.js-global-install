@@ -83,6 +83,13 @@ static int launch(){
 }
 
 int main(int argc, char **argv){
+	//Clean from update
+	char *binPath = getBinaryPath();
+	char *oldBinPath = string_concat(2, binPath, ".old");
+	remove(oldBinPath);
+	free(oldBinPath);
+	free(binPath);
+
 	_argc = argc; _argv = argv;
 	for(int i = 0; i < argc; i++)
 		printf("[nwjsmanager][DEBUG] argv[%d]: %s\n", i, argv[i]);
