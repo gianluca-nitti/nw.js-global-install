@@ -151,7 +151,6 @@ int update(){
 		return 0;
 	}
 	result = update_required(&testIndexJson);
-	update_install(&testIndexJson, downloadCb, NULL);
 	indexJson_file_free(&testIndexJson);
 	return result;
 }
@@ -174,7 +173,7 @@ int main(int argc, char **argv){
 	test_add("Download a file (working Internet connection is required)", downloadFile);
 	test_add("Extract an archive (.tar.gz on Linux, .zip on Windows) (requires the previous test was passed)", extract);
 	//Change number if uncommenting //test_add("Get the parent directory of a file", getParentDir);
-	test_add("Simulate an update", update);
+	test_add("Simulate a check for update", update);
 	test_add("List locally installed nwjs versions in a simulated environment (note: sudo is required)", listInstalledNwjsVersions);
 	return test_run();
 }

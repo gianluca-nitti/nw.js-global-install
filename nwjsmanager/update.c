@@ -9,6 +9,9 @@
 #include "indexJsonFile.h"
 #include "paths.h"
 #include "update.h"
+#ifndef _WIN32
+	#include <sys/stat.h>
+#endif
 
 bool update_required(indexJsonFile_t *indexJson){
 	semver_t currentVersion = {};
@@ -32,6 +35,10 @@ bool update_install(indexJsonFile_t *indexJson, int (*downloadCallback)(long tot
 	sprintf(url, UPDATE_URL, versionString, suffix);
 	char *binPath = getBinaryPath();
 	printf("[nwjsmanager][DEBUG] Update download URL: %s\n[nwjsmanager][DEBUG] Current binary path: %s\n", url, binPath);
+	#ifndef _WIN32
+		struct stat st;
+		stat(binPath, &st);
+	#endif
 	char *renamedBinPath = string_concat(2, binPath, ".old");
 	rename(binPath, renamedBinPath);
 	bool result = download(url, binPath, downloadCallback) == DOWNLOAD_SUCCESS;
@@ -39,6 +46,9 @@ bool update_install(indexJsonFile_t *indexJson, int (*downloadCallback)(long tot
 		rename(renamedBinPath, binPath);
 	free(renamedBinPath);
 	free(url);
+	#ifndef _WIN32
+		chmod(binPath, st.st_mode); //make the new version executable by copying the permissions from the previous version
+	#endif
 	if(result)
 		execv(binPath, argv);
 	free(binPath);
