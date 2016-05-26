@@ -19,7 +19,7 @@ bool update_required(indexJsonFile_t *indexJson){
 	return semver_compare(indexJson->nwjsmanagerLatestVersion, currentVersion) > 0 && indexJson->nwjsmanagerUrgentUpdate;
 }
 
-bool update_install(indexJsonFile_t *indexJson, int (*downloadCallback)(long total, long now, double kBps), char **argv){
+bool update_install(indexJsonFile_t *indexJson, int (*downloadCallback)(long total, long now, double kBps), int argc, char **argv){
 	char versionString[255];
 	sprintf(versionString, "%d.%d.%d", indexJson->nwjsmanagerLatestVersion.major, indexJson->nwjsmanagerLatestVersion.minor, indexJson->nwjsmanagerLatestVersion.patch);
 	#ifdef _WIN32
@@ -49,8 +49,14 @@ bool update_install(indexJsonFile_t *indexJson, int (*downloadCallback)(long tot
 	#ifndef _WIN32
 		chmod(binPath, st.st_mode); //make the new version executable by copying the permissions from the previous version
 	#endif
-	if(result)
+	if(result){
+		//Duplicate array and add null pointer to it's end (as required by execv)
+		char **args = calloc(argc + 1, sizeof(char*));
+		for(int i = 0; i < argc; i++)
+			args[i] = argv[i];
+		args[argc] = NULL;
 		execv(binPath, argv);
+	}
 	free(binPath);
 	return result;
 }

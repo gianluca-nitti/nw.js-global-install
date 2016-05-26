@@ -38,6 +38,7 @@ int download(char *url, char *file, int (*progressCb)(long total, long now, doub
 	curl_easy_setopt(curl, CURLOPT_XFERINFODATA, &data);
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1); //debug
+	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1); //fail on server errors (e.g. 404, 500, ecc.)
 	int result = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 	fclose(f);

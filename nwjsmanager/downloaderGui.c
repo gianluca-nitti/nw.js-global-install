@@ -9,6 +9,7 @@
 #include "packageJsonFile.h"
 #include "paths.h"
 #include "strUtil.h"
+#include "update.h"
 #include "utils.h"
 #ifdef _WIN32
 	#include "win-only/IsWow64.h"
@@ -21,6 +22,8 @@ static Ihandle *pb, *status;
 static packageJsonFile_t *app;
 int stop = 0;
 int globalResult = DOWNLOADERGUI_ERROR;
+extern int _argc;
+extern char** _argv; //Argc and argv from main (these are passed to the update function)
 
 int progressCb(long total, long now, double kBps){
 	double progress = (double)now/(double)total;
@@ -54,6 +57,14 @@ int downloadCb(){
 		getIndexJson(indexJsonPath, &versionIndex);
 	//TODO: check for date and update from repository if it's obsolete.
 	if(versionIndex.nwjsVersionCount != 0){
+		if(update_required(&versionIndex)){
+			Ihandle *info = IupGetHandle("info");
+			IupSetStrf(info, "TITLE", "Downloading nwjsmanager update (you are running v%s, but v%d.%d.%d is available).", NWJSMANAGER_VERSION, versionIndex.nwjsmanagerLatestVersion.major, versionIndex.nwjsmanagerLatestVersion.minor, versionIndex.nwjsmanagerLatestVersion.patch);
+			if(!update_install(&versionIndex, progressCb, _argc, _argv)){
+				IupMessage(app->name, "Failed to install update!");
+				return IUP_CLOSE;
+			}
+		}
 		nwjsVersion_t *launchVersion = NULL;
 		for(int i = 0; i < versionIndex.nwjsVersionCount; i++)
 			if(packageJson_file_is_nw_version_OK(app, versionIndex.nwjsVersions[i].version) && (!launchVersion || semver_gt(versionIndex.nwjsVersions[i].version, launchVersion->version)))

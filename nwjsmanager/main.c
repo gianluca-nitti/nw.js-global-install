@@ -9,6 +9,7 @@
 #include "paths.h"
 #include "strUtil.h"
 #include "downloaderGui.h"
+#include "update.h"
 
 int _argc;
 char** _argv;
@@ -91,6 +92,7 @@ int main(int argc, char **argv){
 	free(binPath);
 
 	_argc = argc; _argv = argv;
+	printf("[nwjsmanager][DEBUG] This is nwjsmanager v%s\n", NWJSMANAGER_VERSION);
 	for(int i = 0; i < argc; i++)
 		printf("[nwjsmanager][DEBUG] argv[%d]: %s\n", i, argv[i]);
 	if(argc < 2)
