@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
 #include <string.h>
 #include <iup.h>
-#include <unistd.h>
 #include "jsonFile.h"
 #include "nwjsBinaryCache.h"
 #include "packageJsonFile.h"
@@ -10,6 +11,7 @@
 #include "strUtil.h"
 #include "downloaderGui.h"
 #include "update.h"
+#include "globals.h"
 
 int _argc;
 char** _argv;
@@ -48,7 +50,7 @@ static int launch(){
 		semverList_free(&installedVersions);
 		IupOpen(&_argc, &_argv);
 		led_load();
-		int result = downloaderGui_download(app);
+		int result = downloaderGui_download();
 		IupClose();
 		if(result == DOWNLOADERGUI_SUCCESS)
 			return launch(); //Recursively call this function, because now the correct nw.js version has been downloaded.
@@ -78,8 +80,14 @@ static int launch(){
 			args[1] = string_concat(3, "\"", args[1], "\""); //Enclosing path to the application's directory in quotes under Windows, to avoid it to be treated as multiple arguments if it contains spaces
 		#endif
 		args[_argc + 1] = NULL;
-		freeGlobals();
-		return execv(binPath, args); //TODO: manage errors
+		execv(binPath, args);
+		//Control flow will get here only if an error occoured (othervise the process is replaced by nw)
+		char *err = strerror(errno);
+		char *errMsg = string_concat(2, "An error occoured while launching the nw binary:\n", err);
+		showError(errMsg);
+		free(errMsg);
+		free(args);
+		return -1;
 	}
 }
 
@@ -104,5 +112,5 @@ int main(int argc, char **argv){
 		return showError("Failed to open or parse the application's package.json file. Please reinstall the application.");
 	}
 	free(packageJsonPath);
-	return launch(); //TODO
+	return launch();
 }

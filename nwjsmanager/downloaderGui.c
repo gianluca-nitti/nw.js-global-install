@@ -16,14 +16,12 @@
 #else
 	#include <fcntl.h>
 #endif
+#include "globals.h"
 #include "downloaderGui.h"
 
 static Ihandle *pb, *status;
-static packageJsonFile_t *app;
 int stop = 0;
 int globalResult = DOWNLOADERGUI_ERROR;
-extern int _argc;
-extern char** _argv; //Argc and argv from main (these are passed to the update function)
 
 int progressCb(long total, long now, double kBps){
 	double progress = (double)now/(double)total;
@@ -132,13 +130,12 @@ void cancelCb(){
 
 
 //Downloads und installs the latest supported nw.js version for the specified application.
-int downloaderGui_download(packageJsonFile_t *_app){
+int downloaderGui_download(){
 	Ihandle *downloaderGui = IupGetHandle("downloaderDlg");
 	pb = IupGetHandle("pb");
 	status = IupGetHandle("status");
 	IupSetCallback(IupGetHandle("cancel"), "ACTION", (Icallback)cancelCb);
-	app = _app;
 	IupSetFunction("IDLE_ACTION", downloadCb);
 	IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
-	return globalResult; //TODO
+	return globalResult;
 }
