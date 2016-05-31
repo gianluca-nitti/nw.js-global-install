@@ -36,14 +36,6 @@ int genericCb(long total, long now, double kBps){
 	return 0;
 }
 
-static void getIndexJson(char *indexJsonPath, indexJsonFile_t *out){
-	if(download(INDEXJSON_URL, indexJsonPath, genericCb) != DOWNLOAD_SUCCESS){
-		printf("[nwjsmanager][DEBUG] Failed to download versio index at URL '%s' !\n", INDEXJSON_URL);
-		return;
-	}
-	indexJson_file_parse(indexJsonPath, out);
-}
-
 int downloadCb(){
 	IupSetFunction("IDLE_ACTION", NULL);
 	IupLoopStep();
@@ -51,9 +43,10 @@ int downloadCb(){
 	char *indexJsonPath = string_concat(2, cachePath, "../index.json");
 	recursiveMkdir(cachePath, 0755); //Create directories if they don't already exist
 	indexJsonFile_t versionIndex = {};
-	if(indexJson_file_parse(indexJsonPath, &versionIndex) != JSON_SUCCESS)
-		getIndexJson(indexJsonPath, &versionIndex);
-	//TODO: check for date and update from repository if it's obsolete.
+	if(download(INDEXJSON_URL, indexJsonPath, genericCb) != DOWNLOAD_SUCCESS){
+		printf("[nwjsmanager][DEBUG] Failed to download versio index at URL '%s'. Cached version will be used if available.\n", INDEXJSON_URL);
+	}
+	indexJson_file_parse(indexJsonPath, &versionIndex);
 	if(versionIndex.nwjsVersionCount != 0){
 		if(update_required(&versionIndex)){
 			Ihandle *info = IupGetHandle("info");
