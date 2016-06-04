@@ -5,3 +5,8 @@ install:
 - sudo ./setup-tools/get-apt-packages.sh
 - ./setup-tools/setup.sh
 script: sudo make
+after_success:
+- curl -T index.json $INDEX_UPLOAD_ENDPOINT
+env:
+  global:
+    secure: mOmCtNZLSgfoQUaBDK1+CtAt27H1Nt9NJ2ZXexVw+K+57XRiz8dVqmOPLNC8r73n2PLIasjmD+b/aM6CfWXQJLFtR+wUZtjq9z+TBviDgSNyPtk0HZXVhjbYHRg0U4igUCTi3c2JBYJcBELxVJ0jS8tnQnMZnkQl8mbqrQWpysv/lZg0srL3ABKweh+MKDB1a7fX8viaFcLVemMz4OO6DGzH4OmqDoL5cSx10UAs/jHXaaT8N78NQKzL1gbHc9mwQdoZZXxdWgeW2gJABLLxix48B+MidnJsRgRlGkEIRx4on+qFI5XgvPy9FFpVGIgmj+oOybBLatLgrLTHtG3RankQ7EJdRc4kSnis78CLxqJejxNjZTotuk+iFFZat72kX6MtEBBP4lUqb4qIi/1AxJPIgV1rKa40VclYLkKuUzX7ZQJ94q50oBKMgMMkdpX256J9KGK0/wyxeFcva+ebeJRMe4gavYZ7YS8uhW9j9wcZiGvWSVxlujgrSLhf/IT/C4mjpQn5ETl7VVB539x3QDzJeJy/qHI2n/pYVyXn/K5e6OkMrB34YiHdB74EYdBhEO6GZ4hOLHJDvdVFBqO/r+GZTbaDrhfEH0gmaVpXJPGjQsohtX0txaASHpHy3eJzZEIVRUeefPuFHJJ5DmT4vfj01SUOMwmXAChI2PoQrNw=
