@@ -6,4 +6,4 @@ The project will define a new way for developers to package their nw.js apps, wi
 A tiny native executable (*applauncher*) is packed with the application: the developer can rename it accordingly to the application's name (and maybe add an icon on Windows), and it's purpose is to look for *nwjsmanager* and launch it with the correct arguments if it's found, or show a proper error message asking the user to reinstall the application if it's not (a copy of *nwjsmanager*, which is around 1MB, is shipped with applications and is installed if it isn't already).
 
 ## Flowchart ([bitmap version](http://i.imgur.com/9yT4De1.png?1))
-![flowchart](https://rawgit.com/gianluca-nitti/nw.js-global-install/master/path/Flowchart.svg)
+![flowchart](https://cdn.rawgit.com/gianluca-nitti/nw.js-global-install/master/Flowchart.svg)
