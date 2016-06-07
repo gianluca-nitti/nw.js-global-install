@@ -19,6 +19,19 @@ bool update_required(indexJsonFile_t *indexJson){
 	return semver_compare(indexJson->nwjsmanagerLatestVersion, currentVersion) > 0 && indexJson->nwjsmanagerUrgentUpdate;
 }
 
+//On Windows, enclose the specified string in quotes. This is require to avoid that a single command line argument containing spaces is interpreted as a set of multiple arguments.
+static char* addQuotesWin(char *str){
+	#ifdef _WIN32
+		char *result = malloc((strlen(str) + 3) * sizeof(char));
+		strcpy(result, "\"");
+		strcat(result, str);
+		strcat(result, "\"");
+		return result;
+	#else
+		return strdup(str);
+	#endif
+}
+
 bool update_install(indexJsonFile_t *indexJson, int (*downloadCallback)(long total, long now, double kBps), int argc, char **argv){
 	char versionString[255];
 	sprintf(versionString, "%d.%d.%d", indexJson->nwjsmanagerLatestVersion.major, indexJson->nwjsmanagerLatestVersion.minor, indexJson->nwjsmanagerLatestVersion.patch);
@@ -53,9 +66,13 @@ bool update_install(indexJsonFile_t *indexJson, int (*downloadCallback)(long tot
 		//Duplicate array and add null pointer to it's end (as required by execv)
 		char **args = calloc(argc + 1, sizeof(char*));
 		for(int i = 0; i < argc; i++)
-			args[i] = argv[i];
+			args[i] = addQuotesWin(argv[i]);
 		args[argc] = NULL;
-		execv(binPath, argv);
+		execv(binPath, args);
+		//If execv fails, free the allocated memory
+		for(int i = 0; i < argc; i++)
+			free(args[i]);
+		free(args);
 	}
 	free(binPath);
 	return result;
