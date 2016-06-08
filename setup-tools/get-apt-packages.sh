@@ -14,6 +14,7 @@ apt-get install -y libgtk2.0-0:i386 # Required for Gtk cross compilation.
 apt-get install -y autoconf         # Required to build curl.
 apt-get install -y automake         # Required to build curl.
 apt-get install -y libtool          # Required to build curl.
+apt-get install -y nsis             # To compile Windows installer
 
 #These links are necessary for the cross-compilation from x86_64 Linux to x86 Linux to link the code with the GTK driver and it's dependencies (credit: http://stackoverflow.com/a/20845987)
 ln -sf /lib/i386-linux-gnu/libglib-2.0.so.0 /usr/lib32/libglib-2.0.so
