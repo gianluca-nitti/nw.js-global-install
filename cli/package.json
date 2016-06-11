@@ -1,0 +1,31 @@
+{
+  "name": "nw-global-build",
+  "version": "1.0.0",
+  "description": "Tool to package nw.js applications with a launcher which will allow the application to use a system-wide installed version of the nw.js runtime.",
+  "main": "index.js",
+  "bin": {
+    "nw-global-build": "./index.js"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gianluca-nitti/nw.js-global-install.git"
+  },
+  "keywords": [
+    "nw.js",
+    "nw",
+    "nwjs"
+  ],
+  "author": "Gianluca Nitti",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gianluca-nitti/nw.js-global-install/issues"
+  },
+  "homepage": "https://github.com/gianluca-nitti/nw.js-global-install#readme",
+  "dependencies": {
+    "cli": "^0.11.2",
+    "lazy-json": "0.0.11"
+  }
+}
