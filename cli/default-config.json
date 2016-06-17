@@ -1,6 +1,6 @@
 {
-	//"name": "your-application-name" //Base name for generated files and packages. By default, the name specified in your package.json is used; uncomment this line to specify a different name.
+	//"name": "your-application-name", //Base name for generated files and packages. By default, the name specified in your package.json is used; uncomment this line to specify a different name.
 	// Version is read from package.json.
-	"gui-name": "Your Application's Name" //User-friendly name. This will be displayed in setup dialogs and similar.
-
+	"gui-name": "Your Application's Name", //User-friendly name. This will be displayed in setup dialogs and similar.
+	"license": "LICENSE" //Name/path to a license text file. If you keep the default, you have to put a file named "LICENSE" in the same directory as nw-global.json.
 }

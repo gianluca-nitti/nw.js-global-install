@@ -26,6 +26,7 @@
   "homepage": "https://github.com/gianluca-nitti/nw.js-global-install#readme",
   "dependencies": {
     "cli": "^0.11.2",
-    "lazy-json": "0.0.11"
+    "lazy-json": "0.0.11",
+    "tiny-template": "0.0.2"
   }
 }

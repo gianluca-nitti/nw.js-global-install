@@ -1,6 +1,7 @@
 applauncher/build/
 applauncher/resources.obj
 cli/node_modules/
+cli/test/
 nwjsmanager/test/test
 nwjsmanager/test/test.old
 nwjsmanager/test/test-data
