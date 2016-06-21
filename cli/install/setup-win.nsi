@@ -10,7 +10,7 @@
 
 ;Name and file
 Name "<%=APPNAMEGUI%>"
-OutFile "build/<%=APPNAME%>-win-setup.exe"
+OutFile "../<%=APPNAME%>-win-setup.exe"
 ;Default installation folder
 InstallDir "$PROGRAMFILES\<%=APPNAME%>"
 ;Get installation folder from registry if available
@@ -48,7 +48,7 @@ Section "<%=APPNAMEGUI%>" SecMain
 	SectionIn RO
 	SetOutPath "$INSTDIR"
 	;ADD YOUR OWN FILES HERE...
-	File "../applauncher/build/win32/applauncher.exe"
+	File "<%=APPLAUNCHERPATH%>"
 	;Store installation folder
 	WriteRegStr HKLM "Software\<%=APPNAME%>" "" $INSTDIR
 	;Create uninstaller

@@ -7,6 +7,7 @@ var path = require('path');
 var lazyjson = require('lazy-json');
 var cli = require('cli');
 var tinytemplate = require('tiny-template');
+var request = require('sync-request');
 
 function fail(msg){
 	console.error('ERROR: ' + msg);
@@ -67,8 +68,27 @@ if(cli.command === 'init'){
 	var license = getConfValue('license');
 	if(!(fs.existsSync(license) && fs.statSync(license).isFile()))
 		fail('failed to open the license file at "' + license + '". Please check nw-global.json.');
-	var template_win = fs.readFileSync('../../install/setup-win.nsi', 'utf8'); //TODO: move install into cli
-	var script_win = tinytemplate.compile(template_win, {'APPNAME': name, 'APPNAMEGUI': guiName, 'LICENSE': license});
+
+	function getBinary(name){
+		var binPath = path.join(__dirname, '/bin/', name);
+		if(fs.existsSync(binPath))
+			if(fs.statSync(binPath).isFile())
+				return binPath; //TODO: check version
+			else
+				fail('failed to retrieve ' + name + ': "' + path + '" is not a file. Please move. rename or delete it to allow this program to download the required binary.');
+		mkdir(path.join(__dirname, '/bin'));
+		try{
+			var binaryIndex = JSON.parse(request('GET', 'http://gntheprogrammer.users.sourceforge.net/nw.js-global-install/binaries.json').getBody());
+			fs.writeFileSync(binPath, request('GET', 'http://gntheprogrammer.users.sourceforge.net/nw.js-global-install/' + binaryIndex[name].path + '/' + name).getBody());
+			//TODO: set permissions
+			return binPath;
+		}catch(ex){
+			fail('failed to download the "' + name + '" binary:\n' + ex.message);
+		}
+	}
+
+	var template_win = fs.readFileSync(path.join(__dirname + '/install/setup-win.nsi'), 'utf8');
+	var script_win = tinytemplate.compile(template_win, {'APPNAME': name, 'APPNAMEGUI': guiName, 'LICENSE': license, 'APPLAUNCHERPATH': getBinary('applauncher.exe')});
 	var nsiPath = path.join(outDir, "intermediate/setup-win.nsi");
 	fs.writeFileSync(nsiPath, script_win);
 	childProcess.execSync('makensis ' + nsiPath);

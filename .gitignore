@@ -1,7 +1,9 @@
 applauncher/build/
 applauncher/resources.obj
 cli/node_modules/
+cli/bin/
 cli/test/
+cli/install/build
 nwjsmanager/test/test
 nwjsmanager/test/test.old
 nwjsmanager/test/test-data
@@ -15,5 +17,4 @@ nwjsmanager/res/resources.obj
 nwjsmanager/res/gui_compiled_win.c
 nwjsmanager/res/gui_compiled_linux.c
 nwjsmanager/res/icon.led
-install/build/
 *~
