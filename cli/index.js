@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
 var childProcess = require('child_process');
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 
 var lazyjson = require('lazy-json');
 var cli = require('cli');
 var tinytemplate = require('tiny-template');
 var request = require('sync-request');
+var recursiveReadSync = require('recursive-readdir-sync');
+var ignore = require('ignore');
 
 function fail(msg){
 	console.error('ERROR: ' + msg);
@@ -24,7 +26,11 @@ function mkdir(dirname){
 }
 
 function cp(src, dest){
-	fs.createReadStream(src).pipe(fs.createWriteStream(dest));
+	try{
+		fs.copySync(src, dest);
+	}catch(ex){
+		fail(ex.message);
+	}
 }
 
 cli.parse(null, ['init', 'build']);
@@ -55,9 +61,9 @@ if(cli.command === 'init'){
 			return conf[key];
 	}
 
-	var outDir = getConfValue('outDir', 'dist');
+	var outDir = getConfValue('out-dir', 'dist');
 	mkdir(outDir);
-	mkdir(path.join(outDir, "intermediate"));
+	mkdir(path.join(outDir, 'intermediate'));
 	var name = conf['name'];
 	if(name === undefined)
 		name = packageJson['name'];
@@ -68,6 +74,10 @@ if(cli.command === 'init'){
 	var license = getConfValue('license');
 	if(!(fs.existsSync(license) && fs.statSync(license).isFile()))
 		fail('failed to open the license file at "' + license + '". Please check nw-global.json.');
+
+	var appFiles = recursiveReadSync('.');
+	var appFilesFilter = ignore().add(getConfValue('ignore')).add(['dist/', 'nw-global.json']);
+	appFiles = appFilesFilter.filter(appFiles);
 
 	function getBinary(name){
 		var binPath = path.join(__dirname, '/bin/', name);
@@ -88,7 +98,10 @@ if(cli.command === 'init'){
 	}
 
 	var template_win = fs.readFileSync(path.join(__dirname + '/install/setup-win.nsi'), 'utf8');
-	var script_win = tinytemplate.compile(template_win, {'APPNAME': name, 'APPNAMEGUI': guiName, 'LICENSE': license, 'APPLAUNCHERPATH': getBinary('applauncher.exe')});
+	var applauncher_win = path.join(outDir, 'intermediate/' + name + '.exe');
+	cp(getBinary('applauncher.exe'), applauncher_win);
+	//TODO: set icon
+	var script_win = tinytemplate.compile(template_win, {'APPNAME': name, 'APPNAMEGUI': guiName, 'LICENSE': license, 'appFiles': appFiles});
 	var nsiPath = path.join(outDir, "intermediate/setup-win.nsi");
 	fs.writeFileSync(nsiPath, script_win);
 	childProcess.execSync('makensis ' + nsiPath);

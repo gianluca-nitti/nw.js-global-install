@@ -27,7 +27,7 @@ RequestExecutionLevel admin
 ;Pages
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "../../<%=LICENSE%>" #temp
+!insertmacro MUI_PAGE_LICENSE "../../<%=LICENSE%>"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -48,7 +48,10 @@ Section "<%=APPNAMEGUI%>" SecMain
 	SectionIn RO
 	SetOutPath "$INSTDIR"
 	;ADD YOUR OWN FILES HERE...
-	File "<%=APPLAUNCHERPATH%>"
+	File "<%=APPNAME%>.exe"
+	<% each (appFiles, el, i) %>
+		File "../../<%=el%>"
+	<% end %>
 	;Store installation folder
 	WriteRegStr HKLM "Software\<%=APPNAME%>" "" $INSTDIR
 	;Create uninstaller
@@ -71,7 +74,10 @@ LangString DESC_SecMain ${LANG_ENGLISH} "<%=APPNAMEGUI%> core files."
 
 Section "Uninstall"
 	;ADD YOUR OWN FILES HERE...
-	Delete "$INSTDIR\applauncher.exe"
+	Delete "$INSTDIR\<%=APPNAME%>.exe"
+	<% each (appFiles, el, i) %>
+		Delete "$INSTDIR\<%=el%>"
+	<% end %>
 	Delete "$INSTDIR\Uninstall.exe"
 	RMDir "$INSTDIR"
 	DeleteRegKey /ifempty HKLM "Software\<%=APPNAME%>"
