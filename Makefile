@@ -1,4 +1,4 @@
-all: applauncher nwjsmanager
+all: applauncher nwjsmanager cli
 .PHONY: applauncher nwjsmanager cli clean
 applauncher:
 	cd applauncher && $(MAKE)
