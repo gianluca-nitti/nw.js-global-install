@@ -15,7 +15,7 @@ apt-get install -y autoconf         # Required to build curl.
 apt-get install -y automake         # Required to build curl.
 apt-get install -y libtool          # Required to build curl.
 apt-get install -y nsis             # To compile Windows installer.
-apt-get install -y nodejs npm       # For jshint.
+apt-get install -y nodejs nodejs-legacy npm       # For jshint.
 npm install -g jshint               # To check for errors in the cli tool.
 
 #These links are necessary for the cross-compilation from x86_64 Linux to x86 Linux to link the code with the GTK driver and it's dependencies (credit: http://stackoverflow.com/a/20845987)
