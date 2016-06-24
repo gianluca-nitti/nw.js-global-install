@@ -51,22 +51,22 @@ if(cli.command === 'init'){
 		fail('failed to open or parse nw-global.json. Please run "nw-global-build init" to create a default nw-global.json in the current directory, then customize it with your build settings and run "nw-global-build build" again.');
 	}
 
-	function getConfValue(key, def){
+	var getConfValue = function(key, def){
 		if(conf[key] === undefined)
 			if(def === undefined){
 				fail('couldn\'t find configuration entry "' + key + '". Please add it in nw-global.json.');	
 			}else
-				return def
+				return def;
 		else
 			return conf[key];
-	}
+	};
 
 	var outDir = getConfValue('out-dir', 'dist');
 	mkdir(outDir);
 	mkdir(path.join(outDir, 'intermediate'));
-	var name = conf['name'];
+	var name = conf.name;
 	if(name === undefined)
-		name = packageJson['name'];
+		name = packageJson.name;
 	if(name === undefined){
 		fail('failed to determine the name of the application (not defined neither in package.json nor in nw-global.json).');
 	}
@@ -79,7 +79,7 @@ if(cli.command === 'init'){
 	var appFilesFilter = ignore().add(getConfValue('ignore')).add(['dist/', 'nw-global.json']);
 	appFiles = appFilesFilter.filter(appFiles);
 
-	function getBinary(name){
+	var getBinary = function(name){
 		var binPath = path.join(__dirname, '/bin/', name);
 		if(fs.existsSync(binPath))
 			if(fs.statSync(binPath).isFile())
@@ -95,7 +95,7 @@ if(cli.command === 'init'){
 		}catch(ex){
 			fail('failed to download the "' + name + '" binary:\n' + ex.message);
 		}
-	}
+	};
 
 	var template_win = fs.readFileSync(path.join(__dirname + '/install/setup-win.nsi'), 'utf8');
 	var applauncher_win = path.join(outDir, 'intermediate/' + name + '.exe');
