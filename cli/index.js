@@ -6,7 +6,7 @@ var path = require('path');
 
 var lazyjson = require('lazy-json');
 var cli = require('cli');
-var tinytemplate = require('tiny-template');
+var swig = require('swig');
 var request = require('sync-request');
 var recursiveReadSync = require('recursive-readdir-sync');
 var ignore = require('ignore');
@@ -64,10 +64,10 @@ if(cli.command === 'init'){
 	var outDir = getConfValue('out-dir', 'dist');
 	mkdir(outDir);
 	mkdir(path.join(outDir, 'intermediate'));
-	var name = conf.name;
-	if(name === undefined)
-		name = packageJson.name;
-	if(name === undefined){
+	var appName= conf.name;
+	if(appName === undefined)
+		appName = packageJson.name;
+	if(appName === undefined){
 		fail('failed to determine the name of the application (not defined neither in package.json nor in nw-global.json).');
 	}
 	var guiName = getConfValue('gui-name');
@@ -78,6 +78,31 @@ if(cli.command === 'init'){
 	var appFiles = recursiveReadSync('.');
 	var appFilesFilter = ignore().add(getConfValue('ignore')).add(['dist/', 'nw-global.json']);
 	appFiles = appFilesFilter.filter(appFiles);
+	var appDirsWin = [];
+	appFiles.forEach(function(fileItem){
+		var foundDir = -1;
+		var fileWindowsPath = fileItem.replace(/\//g, '\\');
+		var dirPath = path.dirname(fileItem);
+		appDirsWin.forEach(function(dirItem, dirIndex){
+			if(dirItem.name === dirPath)
+				foundDir = dirIndex;
+		});
+		if(foundDir == -1)
+			appDirsWin.push({name: dirPath, files: [fileWindowsPath]});
+		else
+			appDirsWin[foundDir].files.push(fileWindowsPath);
+	});
+	appDirsWin.forEach(function(dirItem){ //Add directories that doesn't contain files (necessary for the uninstaller cleanup).
+		var dirParent = path.dirname(dirItem.name);
+		if(dirParent !== '.'){
+			if(appDirsWin.findIndex(function(item){return item.name === dirParent;}) === -1)
+				appDirsWin.push({name: dirParent, files: []});
+		}
+	});
+	appDirsWin.forEach(function(dirItem){
+		dirItem.name = dirItem.name.replace(/\//g, '\\'); //Use Windows backslashes.
+	});
+	appDirsWin.sort(function(a,b){return b.name.localeCompare(a.name);}); //Sort directories by name to delete the inner ones first during unistall.
 
 	var getBinary = function(name){
 		var binPath = path.join(__dirname, '/bin/', name);
@@ -97,11 +122,11 @@ if(cli.command === 'init'){
 		}
 	};
 
-	var template_win = fs.readFileSync(path.join(__dirname + '/install/setup-win.nsi'), 'utf8');
-	var applauncher_win = path.join(outDir, 'intermediate/' + name + '.exe');
+	var template_win = swig.compileFile(path.join(__dirname + '/install/setup-win.nsi'));
+	var applauncher_win = path.join(outDir, 'intermediate/' + appName + '.exe');
 	cp(getBinary('applauncher.exe'), applauncher_win);
 	//TODO: set icon
-	var script_win = tinytemplate.compile(template_win, {'APPNAME': name, 'APPNAMEGUI': guiName, 'LICENSE': license, 'appFiles': appFiles});
+	var script_win = template_win({appName: appName, guiName: guiName, license: license, appDirs: appDirsWin});
 	var nsiPath = path.join(outDir, "intermediate/setup-win.nsi");
 	fs.writeFileSync(nsiPath, script_win);
 	childProcess.execSync('makensis ' + nsiPath);

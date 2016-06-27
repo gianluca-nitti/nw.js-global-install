@@ -9,12 +9,12 @@
 ;General
 
 ;Name and file
-Name "<%=APPNAMEGUI%>"
-OutFile "../<%=APPNAME%>-win-setup.exe"
+Name "{{guiName}}"
+OutFile "..\{{appName}}-win-setup.exe"
 ;Default installation folder
-InstallDir "$PROGRAMFILES\<%=APPNAME%>"
+InstallDir "$PROGRAMFILES\{{appName}}"
 ;Get installation folder from registry if available
-InstallDirRegKey HKLM "Software\<%=APPNAME%>" ""
+InstallDirRegKey HKLM "Software\{{appName}}" ""
 ;Request application privileges for Windows Vista
 RequestExecutionLevel admin
 
@@ -27,7 +27,7 @@ RequestExecutionLevel admin
 ;Pages
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "../../<%=LICENSE%>"
+!insertmacro MUI_PAGE_LICENSE "..\..\{{license}}"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -44,16 +44,19 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Installer Sections
 
-Section "<%=APPNAMEGUI%>" SecMain
+Section "{{guiName}}" SecMain
 	SectionIn RO
 	SetOutPath "$INSTDIR"
 	;ADD YOUR OWN FILES HERE...
-	File "<%=APPNAME%>.exe"
-	<% each (appFiles, el, i) %>
-		File "../../<%=el%>"
-	<% end %>
+	File "{{appName}}.exe"
+	{% for dir in appDirs %}
+		SetOutPath "$INSTDIR\{{dir.name}}"
+		{% for file in dir.files %}
+			File "..\..\{{file}}"
+		{% endfor %}
+	{% endfor %}
 	;Store installation folder
-	WriteRegStr HKLM "Software\<%=APPNAME%>" "" $INSTDIR
+	WriteRegStr HKLM "Software\{{appName}}" "" $INSTDIR
 	;Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 SectionEnd
@@ -62,7 +65,7 @@ SectionEnd
 ;Descriptions
 
 ;Language strings
-LangString DESC_SecMain ${LANG_ENGLISH} "<%=APPNAMEGUI%> core files."
+LangString DESC_SecMain ${LANG_ENGLISH} "{{guiName}} core files."
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -74,11 +77,14 @@ LangString DESC_SecMain ${LANG_ENGLISH} "<%=APPNAMEGUI%> core files."
 
 Section "Uninstall"
 	;ADD YOUR OWN FILES HERE...
-	Delete "$INSTDIR\<%=APPNAME%>.exe"
-	<% each (appFiles, el, i) %>
-		Delete "$INSTDIR\<%=el%>"
-	<% end %>
+	Delete "$INSTDIR\{{appName}}.exe"
+	{% for dir in appDirs %}
+		{% for file dir.files %}
+			Delete "$INSTDIR\{{file}}"
+		{% endfor %}
+		RMDir "$INSTDIR\{{dir.name}}"
+	{% endfor %}
 	Delete "$INSTDIR\Uninstall.exe"
 	RMDir "$INSTDIR"
-	DeleteRegKey /ifempty HKLM "Software\<%=APPNAME%>"
+	DeleteRegKey /ifempty HKLM "Software\{{appName}}"
 SectionEnd
