@@ -64,19 +64,21 @@ if(cli.command === 'init'){
 	var outDir = getConfValue('out-dir', 'dist');
 	mkdir(outDir);
 	mkdir(path.join(outDir, 'intermediate'));
-	var appName= conf.name;
+	var appName = conf.name;
 	if(appName === undefined)
 		appName = packageJson.name;
-	if(appName === undefined){
+	if(appName === undefined)
 		fail('failed to determine the name of the application (not defined neither in package.json nor in nw-global.json).');
-	}
+	var appVersion = packageJson.version;
+	if(appVersion === undefined)
+		fail('failed to determine the version of the application from package.json.');
 	var guiName = getConfValue('gui-name');
 	var license = getConfValue('license');
 	if(!(fs.existsSync(license) && fs.statSync(license).isFile()))
 		fail('failed to open the license file at "' + license + '". Please check nw-global.json.');
 
 	var appFiles = recursiveReadSync('.');
-	var appFilesFilter = ignore().add(getConfValue('ignore')).add(['dist/', 'nw-global.json']);
+	var appFilesFilter = ignore().add(getConfValue('ignore')).add(['/' + outDir + '/', '/nw-global.json']);
 	appFiles = appFilesFilter.filter(appFiles);
 	var appDirsWin = [];
 	appFiles.forEach(function(fileItem){
@@ -126,7 +128,7 @@ if(cli.command === 'init'){
 	var applauncher_win = path.join(outDir, 'intermediate/' + appName + '.exe');
 	cp(getBinary('applauncher.exe'), applauncher_win);
 	//TODO: set icon
-	var script_win = template_win({appName: appName, guiName: guiName, license: license, appDirs: appDirsWin});
+	var script_win = template_win({appName: appName, guiName: guiName, appVersion: appVersion, license: license, appDirs: appDirsWin});
 	var nsiPath = path.join(outDir, "intermediate/setup-win.nsi");
 	fs.writeFileSync(nsiPath, script_win);
 	childProcess.execSync('makensis ' + nsiPath);

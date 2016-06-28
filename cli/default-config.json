@@ -4,5 +4,5 @@
 	"gui-name": "Your Application's Name", //User-friendly name. This will be displayed in setup dialogs and similar.
 	"license": "LICENSE", //Name/path to a license text file. If you keep the default, you have to put a file named "LICENSE" in the same directory as nw-global.json.
 	"out-dir": "dist", //Directory where generated installers/packages will be placed.
-	"ignore": [] //Array of patterns for files that mustn't be packaged. The value of out-dir is automatically added at runtime (output files from a previous build are always excluded). This file, nw-global.json, is also always ignored. The format is that of the .gitignore rules. More info here: https://www.npmjs.com/package/ignore
+	"ignore": ["*~"] //Array of patterns for files that mustn't be packaged. The value of out-dir is automatically added at runtime (output files from a previous build are always excluded). This file, nw-global.json, is also always ignored. The format is that of the .gitignore rules. More info here: https://www.npmjs.com/package/ignore
 }
