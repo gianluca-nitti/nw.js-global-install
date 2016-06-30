@@ -2,5 +2,9 @@
 	"applauncher.exe":{
 		"path": "applauncher/v1.0.0",
 		"checksum": ""
+	},
+	"nwjsmanager.exe":{
+		"path": "v1.0.0",
+		"checksum": ""
 	}
 }

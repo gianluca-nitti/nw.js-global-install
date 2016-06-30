@@ -128,7 +128,7 @@ if(cli.command === 'init'){
 	var applauncher_win = path.join(outDir, 'intermediate/' + appName + '.exe');
 	cp(getBinary('applauncher.exe'), applauncher_win);
 	//TODO: set icon
-	var script_win = template_win({appName: appName, guiName: guiName, appVersion: appVersion, license: license, appDirs: appDirsWin});
+	var script_win = template_win({appName: appName, guiName: guiName, appVersion: appVersion, nwjsmanager: getBinary('nwjsmanager.exe'), license: license, appDirs: appDirsWin});
 	var nsiPath = path.join(outDir, "intermediate/setup-win.nsi");
 	fs.writeFileSync(nsiPath, script_win);
 	childProcess.execSync('makensis ' + nsiPath);

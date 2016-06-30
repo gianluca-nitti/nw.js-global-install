@@ -47,8 +47,14 @@ RequestExecutionLevel admin
 
 Section "{{guiName}}" SecMain
 	SectionIn RO
+	; Install nwjsmanager if it's not already installed
+	SetOverWrite off
+	SetShellVarContext all
+	SetOutPath "$APPDATA\nwjs"
+	File "{{nwjsmanager}}"
+	SetOverWrite on
+	; Install application's files
 	SetOutPath "$INSTDIR"
-	;ADD YOUR OWN FILES HERE...
 	File "{{appName}}.exe"
 	{% for dir in appDirs %}
 		SetOutPath "$INSTDIR\{{dir.name}}"
@@ -68,6 +74,7 @@ Section "{{guiName}}" SecMain
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\{{appName}}" "EstimatedSize" "$0"
 	;Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
+
 SectionEnd
 
 Section "Start menu shortcut" SecStartShortcut
@@ -101,7 +108,7 @@ LangString DESC_SecDesktopShortcut ${LANG_ENGLISH} "Shortcut to launch {{guiName
 ;Uninstaller Section
 
 Section "Uninstall"
-	;ADD YOUR OWN FILES HERE...
+	SetShellVarContext all
 	Delete "$INSTDIR\{{appName}}.exe"
 	{% for dir in appDirs %}
 		{% for file dir.files %}
@@ -117,4 +124,5 @@ Section "Uninstall"
 	Delete "$SMPROGRAMS\{{guiName}}\Uninstall.lnk"
 	RMDir "$SMPROGRAMS\{{guiName}}"
 	Delete "$DESKTOP\{{guiName}}.lnk"
+	; TODO: allow user to choose if delete the data directory
 SectionEnd
