@@ -8,6 +8,7 @@ nwjsmanager/test/test
 nwjsmanager/test/test.old
 nwjsmanager/test/test-data
 nwjsmanager/test/win/testZip.exe
+nwjsmanager/test/testTextFile.txt
 nwjsmanager/build/
 nwjsmanager/lib/
 nwjsmanager/tools/ledc

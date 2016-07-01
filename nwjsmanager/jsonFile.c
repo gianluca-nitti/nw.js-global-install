@@ -2,34 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 #include <jsmn.h>
+#include "textFile.h"
 #include "jsonFile.h"
-
-//Loads a text file into a buffer string, which is returned. 
-static char* readFile(char *path){
-	FILE *f = fopen(path, "r");
-	if(!f)
-		return NULL;
-	//The following if statements are to ensure the file is not a directory.
-	if(fseek(f, 0, SEEK_END) < 0){
-		fclose(f);
-		return NULL;
-	}
-	long len = ftell(f);
-	if(len == -1L || len == LONG_MAX){
-		fclose(f);
-		return NULL;
-	}
-	char *buffer = malloc((len + 1)*sizeof(char));
-	fseek(f, 0, SEEK_SET);
-	int i = 0;
-	while(!feof(f))
-		buffer[i++] = fgetc(f);
-	buffer[i - 1] = '\0';
-	fclose(f);
-	return buffer;
-}
 
 static int is_jsmn_error(int i){
 	return i == JSMN_ERROR_INVAL || i == JSMN_ERROR_NOMEM || i == JSMN_ERROR_PART;
@@ -49,7 +24,7 @@ static int countAllSubTokens(jsonFile_t *f, int root){
 
 //Reads a json file and parses it using the jsmn library.
 int json_file_parse(char* file, jsonFile_t *out){
-	char* buf = readFile(file);
+	char* buf = readTextFile(file);
 	if(!buf)
 		return JSON_ERROR;
 	jsmn_parser parser;

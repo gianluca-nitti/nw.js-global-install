@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "test.h"
+#include "../textFile.h"
 #include "../jsonFile.h"
 #include "../packageJsonFile.h"
 #include "../indexJsonFile.h"
@@ -12,6 +13,19 @@
 #include "../extractArchive.h"
 #include "../update.h"
 #include "../paths.h"
+
+int writeReadTextFile(){
+	char *str = "this\nis\na\ntest\nstring";
+	int result = writeTextFile("testTextFile.txt", str);
+	if(!result)
+		return 0;
+	char *readStr = readTextFile("testTextFile.txt");
+	if(!readStr)
+		return 0;
+	result = strcmp(str, readStr);
+	free(readStr);
+	return result == 0;
+}
 
 int parseSimpleJson(){
 	jsonFile_t f;
@@ -165,7 +179,8 @@ int update(){
 }*/
 
 int main(int argc, char **argv){
-	test_init(8);
+	test_init(9);
+	test_add("Write and read a text file", writeReadTextFile);
 	test_add("Parse a simple JSON file", parseSimpleJson);
 	test_add("Parse a package.json file", parsePackageJson);
 	test_add("Cast an application's package.json file to a packageJsonFile_t struct", parseAppPackageJson);
