@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "test.h"
 #include "../textFile.h"
+#include "../appList.h"
 #include "../jsonFile.h"
 #include "../packageJsonFile.h"
 #include "../indexJsonFile.h"
@@ -25,6 +26,15 @@ int writeReadTextFile(){
 	result = strcmp(str, readStr);
 	free(readStr);
 	return result == 0;
+}
+
+int editAppList(){
+	appList_add("app5");
+	//appList_remove("app2");
+	char* str = readTextFile("/var/cache/nwjs/appList"); //This is run in chroot environment, initializad by a previous test.
+	int result = strcmp(str, "app1\napp2\napp3\napp4\napp5\n") == 0;
+	free(str);
+	return result;
 }
 
 int parseSimpleJson(){
@@ -169,17 +179,8 @@ int update(){
 	return result;
 }
 
-/*int getParentDir(){
-	char *s = getParentDirectory("/usr/bin/foo/bar");
-	if(!s)
-		return 0;
-	int result = strcmp(s, "/usr/bin/foo") == 0;
-	free(s);
-	return result;
-}*/
-
 int main(int argc, char **argv){
-	test_init(9);
+	test_init(10);
 	test_add("Write and read a text file", writeReadTextFile);
 	test_add("Parse a simple JSON file", parseSimpleJson);
 	test_add("Parse a package.json file", parsePackageJson);
@@ -187,8 +188,8 @@ int main(int argc, char **argv){
 	test_add("Parse the index.json file", parseIndexJson);
 	test_add("Download a file (working Internet connection is required)", downloadFile);
 	test_add("Extract an archive (.tar.gz on Linux, .zip on Windows) (requires the previous test was passed)", extract);
-	//Change number if uncommenting //test_add("Get the parent directory of a file", getParentDir);
 	test_add("Simulate a check for update", update);
 	test_add("List locally installed nwjs versions in a simulated environment (note: sudo is required)", listInstalledNwjsVersions);
+	test_add("Edit a application list file", editAppList);
 	return test_run();
 }
