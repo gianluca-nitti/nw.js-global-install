@@ -84,6 +84,16 @@ void appList_add(char *name){
 
 //Removes an application from the list. Returns 1 if after the operation the list is empty, otherwise 0. This will be used to prompt the user if he/she wants to remove nwjsmanager and nw.js cached binaries when uninstalling an application (the prompt will be shown only if there aren't other nw.js applications).
 int appList_remove(char *name){
-	//TODO
+	char** appList = readAppList();
+	int i = 0;
+	while(appList[i])
+		if(strcmp(appList[i++], name) == 0){
+			free(appList[--i]);
+			while(appList[i++])
+				appList[i - 1] = appList[i];
+			break;
+		}
+	writeAppList(appList);
+	freeAppList(appList);
 	return 0;
 }

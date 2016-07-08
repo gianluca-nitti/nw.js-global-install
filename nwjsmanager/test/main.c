@@ -30,9 +30,9 @@ int writeReadTextFile(){
 
 int editAppList(){
 	appList_add("app5");
-	//appList_remove("app2");
+	appList_remove("app2");
 	char* str = readTextFile("/var/cache/nwjs/appList"); //This is run in chroot environment, initializad by a previous test.
-	int result = strcmp(str, "app1\napp2\napp3\napp4\napp5\n") == 0;
+	int result = strcmp(str, "app1\napp3\napp4\napp5\n") == 0;
 	free(str);
 	return result;
 }
