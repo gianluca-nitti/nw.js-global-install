@@ -11,6 +11,7 @@
 #include "strUtil.h"
 #include "downloaderGui.h"
 #include "update.h"
+#include "appList.h"
 #include "globals.h"
 
 int _argc;
@@ -98,6 +99,12 @@ int main(int argc, char **argv){
 	remove(oldBinPath);
 	free(oldBinPath);
 	free(binPath);
+
+	//Commands to edit the list of installed nw.js applications
+	if(argc > 2 && strcmp(argv[1], "--install") == 0)
+		return appList_add(argv[2]);
+	else if(argc > 2 && strcmp(argv[1], "--uninstall") == 0)
+		return appList_remove(argv[2]);
 
 	_argc = argc; _argv = argv;
 	printf("[nwjsmanager][DEBUG] This is nwjsmanager v%s\n", NWJSMANAGER_VERSION);

@@ -63,26 +63,31 @@ static int writeAppList(char** list){
 		strcat(strcat(appListStr, list[i]), "\n");
 	char* appListPath = getAppListPath();
 	int result = writeTextFile(appListPath, appListStr);
+	if(!result)
+		printf("Failed to write %s\n", appListPath);
 	free(appListPath);
 	free(appListStr);
 	return result;
 }
 
-//Adds an application to the list of the installed applications.
-void appList_add(char *name){
+//Adds an application to the list of the installed applications. Returns 0 on success, 2 on error.
+int appList_add(char *name){
 	char** appList = readAppList();
 	int i = 0;
 	while(appList[i])
 		if(strcmp(appList[i++], name) == 0){
 			freeAppList(appList);
-			return;
+			return 0;
 		}
 	appList[i] = strdup(name); //This replaces the first null byte; the second one becomes the marker of the end of the list.
-	writeAppList(appList);
+	int result = 0;
+	if(!writeAppList(appList))
+		result = 2;
 	freeAppList(appList);
+	return result;
 }
 
-//Removes an application from the list. Returns 1 if after the operation the list is empty, otherwise 0. This will be used to prompt the user if he/she wants to remove nwjsmanager and nw.js cached binaries when uninstalling an application (the prompt will be shown only if there aren't other nw.js applications).
+//Removes an application from the list. On failure, returns 2. Returns 1 if after the operation the list is empty, otherwise 0. This will be used to prompt the user if he/she wants to remove nwjsmanager and nw.js cached binaries when uninstalling an application (the prompt will be shown only if there aren't other nw.js applications).
 int appList_remove(char *name){
 	char** appList = readAppList();
 	int i = 0;
@@ -93,7 +98,11 @@ int appList_remove(char *name){
 				appList[i - 1] = appList[i];
 			break;
 		}
-	writeAppList(appList);
+	int result = 0;
+	if(appList[0] == NULL)
+		result = 1;
+	if(!writeAppList(appList))
+		result = 2;
 	freeAppList(appList);
-	return 0;
+	return result;
 }
