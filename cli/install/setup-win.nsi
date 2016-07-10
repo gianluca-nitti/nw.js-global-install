@@ -5,6 +5,7 @@
 
 !include "MUI2.nsh"
 !include "FileFunc.nsh"
+!include "LogicLib.nsh"
 
 ;--------------------------------
 ;General
@@ -72,6 +73,8 @@ Section "{{guiName}}" SecMain
 	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2 ; Compute EstimatedSize
 	IntFmt $0 "0x%08X" $0
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\{{appName}}" "EstimatedSize" "$0"
+	;Add to the nwjsmanager list of installed applications
+	ExecWait "$APPDATA\nwjs\nwjsmanager.exe --install {{appName}}"
 	;Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -125,4 +128,11 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\{{guiName}}"
 	Delete "$DESKTOP\{{guiName}}.lnk"
 	; TODO: allow user to choose if delete the data directory
+	ExecWait "$APPDATA\nwjs\nwjsmanager.exe --uninstall {{appName}}" $0
+	${If} $0 == "1"
+		MessageBox MB_YESNO "The uninstalled application was based on the nw.js framework. There aren't other nw.js-based applications installed on this system, so these files are no longer necessary. Do you want to remove them? This will delete the whole $APPDATA\nwjs directory. Choose No if you want to reinstall {{guiName}}." IDYES yes IDNO no
+		yes:
+			RMDir /r "$APPDATA\nwjs"
+		no:
+	${EndIf}
 SectionEnd
