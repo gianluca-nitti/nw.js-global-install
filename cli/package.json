@@ -29,6 +29,7 @@
     "fs-extra": "^0.30.0",
     "ignore": "^3.1.3",
     "lazy-json": "0.0.11",
+    "log": "^1.4.0",
     "recursive-readdir-sync": "^1.0.6",
     "swig": "^1.4.2",
     "sync-request": "^3.0.1"
