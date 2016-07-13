@@ -3,6 +3,7 @@
 var childProcess = require('child_process');
 var fs = require('fs-extra');
 var path = require('path');
+var os = require('os');
 
 var lazyjson = require('lazy-json');
 var cli = require('cli');
@@ -52,7 +53,6 @@ function getBinary(name){
 		log.notice('Downloading ' + name + '...');
 		var binaryIndex = JSON.parse(request('GET', 'http://gntheprogrammer.users.sourceforge.net/nw.js-global-install/binaries.json').getBody());
 		fs.writeFileSync(binPath, request('GET', 'http://gntheprogrammer.users.sourceforge.net/nw.js-global-install/' + binaryIndex[name].path + '/' + name).getBody());
-		//TODO: set permissions
 		return binPath;
 	}catch(ex){
 		fail('Failed to download the "' + name + '" binary:\n' + ex.message);
@@ -168,7 +168,27 @@ if(cli.command === 'init'){
 	};
 
 	var buildLinux = function(){
-		//TODO
+		if(process.platform == 'win32')
+			log.warning('Running on windows. You probably won\'t be able to build linux packages (build tool is fpm; see https://github.com/jordansissel/fpm/issues/505 for more information.)');
+		log.notice('Setting up temporary directory environment for building Linux packages.');
+		var tmpRoot = fs.mkdtempSync(os.tmpDir() + '/' + appName);
+		log.info('Temporary directory is ' + tmpRoot);
+		var tmpAppDir = tmpRoot + '/opt/' + appName;
+		fs.mkdirsSync(tmpAppDir);
+		log.info('Copying tree to temporary directory without the ignored files.');
+		appFiles.forEach(function(item){
+			fs.copySync(item, tmpAppDir + '/' + item);
+		});
+		fs.copySync(getBinary('applauncher-linux32'), tmpAppDir + '/' + appName + '32');
+		fs.chmodSync(tmpAppDir + '/' + appName + '32', 0755);
+		fs.copySync(getBinary('applauncher-linux64'), tmpAppDir + '/' + appName + '64');
+		fs.chmodSync(tmpAppDir + '/' + appName + '64', 0755);
+		log.notice('Generating deb package.');
+		exec('fpm', '-f -s dir -t deb -p ' + path.join(outDir, appName + '-linux.deb') + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a all');
+		log.notice('Successfully built deb package.');
+		log.notice('Generating rpm package.');
+		exec('fpm', '-f -s dir -t rpm -p ' + path.join(outDir, appName + '-linux.rpm') + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a all --directories=/opt/' + appName);
+		log.notice('Successfully built rpm package.');
 	};
 
 	buildWindows();

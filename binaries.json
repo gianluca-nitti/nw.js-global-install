@@ -6,5 +6,13 @@
 	"nwjsmanager.exe":{
 		"path": "v1.0.0",
 		"checksum": ""
+	},
+	"applauncher-linux32":{
+		"path": "applauncher/v1.0.0",
+		"checksum": ""
+	},
+	"applauncher-linux64":{
+		"path": "applauncher/v1.0.0",
+		"checksum": ""
 	}
 }
