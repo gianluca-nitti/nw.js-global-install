@@ -96,7 +96,7 @@ int main(int argc, char **argv){
 			SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA|CSIDL_FLAG_CREATE, NULL, 0, nwjsmanagerpath);
 			strcat(nwjsmanagerpath, "\\nwjs\\nwjsmanager.exe");
 		#else
-			nwjsmanagerpath = "/usr/local/bin/nwjsmanager";
+			nwjsmanagerpath = "/usr/bin/nwjsmanager";
 		#endif
 	}
 	printf("[DEBUG] Path to nwjsmanager: %s\n", nwjsmanagerpath);

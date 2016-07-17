@@ -14,5 +14,13 @@
 	"applauncher-linux64":{
 		"path": "applauncher/v1.0.0",
 		"checksum": ""
+	},
+	"nwjsmanager-linux32":{
+		"path": "v1.0.0",
+		"checksum": ""
+	},
+	"nwjsmanager-linux64":{
+		"path": "v1.0.0",
+		"checksum": ""
 	}
 }

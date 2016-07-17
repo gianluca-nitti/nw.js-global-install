@@ -156,7 +156,7 @@ if(cli.command === 'init'){
 			dirItem.name = dirItem.name.replace(/\//g, '\\'); //Use Windows backslashes.
 		});
 		appDirsWin.sort(function(a,b){return b.name.localeCompare(a.name);}); //Sort directories by name to delete the inner ones first during unistall.
-		var template_win = swig.compileFile(path.join(__dirname + '/install/setup-win.nsi'));
+		var template_win = swig.compileFile(path.join(__dirname, '/install/setup-win.nsi'));
 		var applauncher_win = path.join(outDir, 'intermediate/' + appName + '.exe');
 		cp(getBinary('applauncher.exe'), applauncher_win);
 		//TODO: set icon
@@ -179,16 +179,28 @@ if(cli.command === 'init'){
 		appFiles.forEach(function(item){
 			fs.copySync(item, tmpAppDir + '/' + item);
 		});
-		fs.copySync(getBinary('applauncher-linux32'), tmpAppDir + '/' + appName + '32');
-		fs.chmodSync(tmpAppDir + '/' + appName + '32', 0755);
-		fs.copySync(getBinary('applauncher-linux64'), tmpAppDir + '/' + appName + '64');
-		fs.chmodSync(tmpAppDir + '/' + appName + '64', 0755);
-		log.notice('Generating deb package.');
-		exec('fpm', '-f -s dir -t deb -p ' + path.join(outDir, appName + '-linux.deb') + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a all');
-		log.notice('Successfully built deb package.');
-		log.notice('Generating rpm package.');
-		exec('fpm', '-f -s dir -t rpm -p ' + path.join(outDir, appName + '-linux.rpm') + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a all --directories=/opt/' + appName);
-		log.notice('Successfully built rpm package.');
+		var addBinary = function(binName, binPath){
+			fs.copySync(getBinary(binName), binPath);
+			fs.chmodSync(binPath, 0755);
+		};
+		var installScripts = ' --template-scripts --after-install ' + path.join(__dirname, '/install/after-install-linux.sh') + ' --after-remove ' + path.join(__dirname, '/install/after-uninstall-linux.sh');
+		var buildPkg = function(format, arch){
+			var realArch = '';
+			if(arch == 32)
+				realArch = 'i386';
+			else if(arch == 64)
+				realArch = 'x86_64';
+			log.notice('Building Linux package - ' + format + '-' + realArch);
+			log.info('Adding applauncher binaries...');
+			addBinary('applauncher-linux' + arch, tmpAppDir + '/' + appName);
+			addBinary('nwjsmanager-linux' + arch, tmpAppDir + '/nwjsmanager-install');
+			exec('fpm', '-f -s dir -t ' + format + ' -p ' + path.join(outDir, appName + '-linux-' + realArch + '.' + format) + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a ' + realArch + ' --directories=/opt/' + appName + installScripts);
+			log.notice('Successfully built ' + format + '-' + realArch + ' package.');
+		};
+		buildPkg('deb', 32);
+		buildPkg('deb', 64);
+		buildPkg('rpm', 32);
+		buildPkg('rpm', 64);
 	};
 
 	buildWindows();
