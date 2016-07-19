@@ -97,8 +97,10 @@ if(cli.command === 'init'){
 		if(conf[key] === undefined)
 			if(def === undefined){
 				fail('Couldn\'t find configuration entry "' + key + '". Please add it in nw-global.json.');
-			}else
+			}else{
+				log.warning('Couldn\'t find configuration entry "' + key + '", using default value "' + def + '". Add the desidered value in nw-global.json to override.');
 				return def;
+			}
 		else
 			return conf[key];
 	};
@@ -184,6 +186,7 @@ if(cli.command === 'init'){
 			fs.chmodSync(binPath, 0755);
 		};
 		var installScripts = ' --template-scripts --after-install ' + path.join(__dirname, '/install/after-install-linux.sh') + ' --after-remove ' + path.join(__dirname, '/install/after-uninstall-linux.sh');
+		var maintainer = ' -m "' + getConfValue('maintainer-name', 'A package maintainer') + ' <' + getConfValue('maintainer-email', 'packagemaintainer@example.com') + '>"';
 		var buildPkg = function(format, arch){
 			var realArch = '';
 			if(arch == 32)
@@ -194,7 +197,7 @@ if(cli.command === 'init'){
 			log.info('Adding applauncher binaries...');
 			addBinary('applauncher-linux' + arch, tmpAppDir + '/' + appName);
 			addBinary('nwjsmanager-linux' + arch, tmpAppDir + '/nwjsmanager-install');
-			exec('fpm', '-f -s dir -t ' + format + ' -p ' + path.join(outDir, appName + '-linux-' + realArch + '.' + format) + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a ' + realArch + ' --directories=/opt/' + appName + installScripts);
+			exec('fpm', '-f -s dir -t ' + format + ' -p ' + path.join(outDir, appName + '-linux-' + realArch + '.' + format) + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a ' + realArch + ' --directories=/opt/' + appName + installScripts + maintainer);
 			log.notice('Successfully built ' + format + '-' + realArch + ' package.');
 		};
 		buildPkg('deb', 32);

@@ -77,7 +77,8 @@ Section "{{guiName}}" SecMain
 	ExecWait "$APPDATA\nwjs\nwjsmanager.exe --install {{appName}}"
 	;Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
-
+	;Use nwjsmanager to download the right nw.js version
+	ExecWait '$APPDATA\nwjs\nwjsmanager.exe "$INSTDIR" --nwjsmanager-prepare'
 SectionEnd
 
 Section "Start menu shortcut" SecStartShortcut
