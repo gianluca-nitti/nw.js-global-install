@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name={{appName}}
+Exec=/opt/{{appName}}/{{appName}}
+Terminal=false
+Icon=/opt/{{appName}}/icon.png
+Type=Application
+Categories={{appCategories}}

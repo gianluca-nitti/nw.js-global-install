@@ -2,9 +2,11 @@
 	//"name": "your-application-name", //Base name for generated files and packages. By default, the name specified in your package.json is used; uncomment this line to specify a different name.
 	// Version is read from package.json.
 	"gui-name": "Your Application's Name", //User-friendly name. This will be displayed in setup dialogs and similar.
+	"icon": "icon.png", //Path to a PNG icon for the application (relative to the root directory of the application, i.e. the directory this nw-global.json file is in).
 	"license": "LICENSE", //Name/path to a license text file. If you keep the default, you have to put a file named "LICENSE" in the same directory as nw-global.json.
 	"maintainer-name": "A package maintainer", //Full name of package maintainer
 	"maintainer-email": "packagemaintainer@example.com", //Email address of package maintainer
+	"categories": "", //Categories the applications belongs to, semicolon separated. This is for the .desktop file on Linux. See https://specifications.freedesktop.org/menu-spec/latest/apa.html for a list of the allowed categories.
 	"out-dir": "dist", //Directory where generated installers/packages will be placed.
 	"ignore": ["*~"], //Array of patterns for files that mustn't be packaged. The value of out-dir is automatically added at runtime (output files from a previous build are always excluded). This file, nw-global.json, is also always ignored. The format is that of the .gitignore rules. More info here: https://www.npmjs.com/package/ignore
 	"log-level": "notice" //Verbosity level of the build tool. Range is Error(failure messages only), Warning, Notice, Info, Debug (with full output of any underlying command such as makensis or fpm). Based on https://www.npmjs.com/package/log.

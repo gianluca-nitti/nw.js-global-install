@@ -131,6 +131,8 @@ if(cli.command === 'init'){
 	appFiles = appFilesFilter.filter(appFiles);
 	log.notice((totalFiles - appFiles.length) + ' files are being ignored.');
 
+	var iconPath = getConfValue('icon', path.join(__dirname, '/install/default-icon.png')); //TODO: implement conversion
+
 	var buildWindows = function(){
 		log.notice('Begin building installer for Windows.');
 		var appDirsWin = [];
@@ -187,6 +189,7 @@ if(cli.command === 'init'){
 		};
 		var installScripts = ' --template-scripts --after-install ' + path.join(__dirname, '/install/after-install-linux.sh') + ' --after-remove ' + path.join(__dirname, '/install/after-uninstall-linux.sh');
 		var maintainer = ' -m "' + getConfValue('maintainer-name', 'A package maintainer') + ' <' + getConfValue('maintainer-email', 'packagemaintainer@example.com') + '>"';
+		var categories = getConfValue('categories', '');
 		var buildPkg = function(format, arch){
 			var realArch = '';
 			if(arch == 32)
@@ -197,6 +200,14 @@ if(cli.command === 'init'){
 			log.info('Adding applauncher binaries...');
 			addBinary('applauncher-linux' + arch, tmpAppDir + '/' + appName);
 			addBinary('nwjsmanager-linux' + arch, tmpAppDir + '/nwjsmanager-install');
+			log.info('Generating .desktop file...');
+			var desktopFile = swig.compileFile(path.join(__dirname, '/install/desktopFile.desktop'))({appName: appName, appCategories: categories}); //Add .desktop files to show application in menus
+			fs.mkdirsSync(path.join(tmpRoot, '/usr/share/applications'));
+			var desktopFilePath = path.join(tmpRoot, '/usr/share/applications/' + appName + '.desktop');
+			fs.writeFileSync(desktopFilePath, desktopFile);
+			fs.chmodSync(desktopFilePath, 0644);
+			log.info('Adding icon...');
+			cp(iconPath, path.join(tmpAppDir, '/icon.png')); //Add icon
 			exec('fpm', '-f -s dir -t ' + format + ' -p ' + path.join(outDir, appName + '-linux-' + realArch + '.' + format) + ' -n ' + appName + ' -v ' + appVersion + ' -C ' + tmpRoot + ' -a ' + realArch + ' --directories=/opt/' + appName + installScripts + maintainer);
 			log.notice('Successfully built ' + format + '-' + realArch + ' package.');
 		};
@@ -204,6 +215,7 @@ if(cli.command === 'init'){
 		buildPkg('deb', 64);
 		buildPkg('rpm', 32);
 		buildPkg('rpm', 64);
+		fs.removeSync(tmpRoot);
 	};
 
 	buildWindows();
