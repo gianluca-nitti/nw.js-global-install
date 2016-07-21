@@ -2,25 +2,10 @@
 #include <stdlib.h>
 //#include <string.h>
 //#include <semver.h> //in the stable version of semver.c, semver.h doesn't have a proper include guard, so it's included only once inside indexJsonFile.h
+#include "strUtil.h"
 #include "jsonFile.h"
 #include "indexJsonFile.h"
 
-static int indexJson_file_parse_downloads(jsonFile_t *file, int versionTokenIndex, char *type, nwjsDownload_t *out){
-	int downloads_root_token = json_file_get_subtoken_abs_index(file, json_file_get_token_index(file, type, versionTokenIndex), 0);
-	if(downloads_root_token == JSON_ERROR){
-		out->linux32 = out->linux64 = out->win32 = out->win64 = NULL;
-		return JSON_ERROR;
-	}
-	out->linux32 = json_file_get_value_from_key(file, "linux32", downloads_root_token);
-	out->linux64 = json_file_get_value_from_key(file, "linux64", downloads_root_token);
-	out->win32 = json_file_get_value_from_key(file, "win32", downloads_root_token);
-	out->win64 = json_file_get_value_from_key(file, "win64", downloads_root_token);
-	if(out->linux32 == NULL || out->linux64 == NULL || out->win32 == NULL || out->win64 == NULL)
-		return JSON_ERROR;
-	return JSON_SUCCESS;
-}
-
-//Cast the nwjs version information from the index.json file to a indexJsonFile_t struct.
 int indexJson_file_parse(char *f, indexJsonFile_t *out){
 	jsonFile_t file = {};
 	int result = json_file_parse(f, &file);
@@ -58,11 +43,12 @@ int indexJson_file_parse(char *f, indexJsonFile_t *out){
 	for(int i = 0; i < out->nwjsVersionCount; i++){
 		char *v = json_file_get_value_from_key(&file, "version", nwjs_versions[i]);
 		if(semver_parse(v, &out->nwjsVersions[i].version) == 0){
-			if(indexJson_file_parse_downloads(&file, nwjs_versions[i], "default", &out->nwjsVersions[i].defaultDownloads) != JSON_SUCCESS)
-				result = INDEXJSON_ERROR_NWJS_INDEX; //if there are no default downloads, then fail.
-			//Other downloads are optional because not all nw.js versions are available in multiple build flavors.
-			indexJson_file_parse_downloads(&file, nwjs_versions[i], "nacl", &out->nwjsVersions[i].naclDownloads);
-			indexJson_file_parse_downloads(&file, nwjs_versions[i], "sdk", &out->nwjsVersions[i].sdkDownloads);
+			char *baseUrl = string_concat(4, "http://dl.nwjs.io/v", v, "nwjs-v", v, "");
+			out->nwjsVersions[i].defaultDownloads.linux32 = string_concat(2, baseUrl, "-linux-ia32.tar.gz");
+			out->nwjsVersions[i].defaultDownloads.linux64 = string_concat(2, baseUrl, "-linux-x64.tar.gz");
+			out->nwjsVersions[i].defaultDownloads.win32 = string_concat(2, baseUrl, "-win-ia32.zip");
+			out->nwjsVersions[i].defaultDownloads.win64 = string_concat(2, baseUrl, "-win-x64.zip");
+			free(baseUrl);
 		}else
 			result = INDEXJSON_ERROR_NWJS_INDEX;
 		free(v);
@@ -88,8 +74,6 @@ void indexJson_file_free(indexJsonFile_t *f){
 			for(int i = 0; i < f->nwjsVersionCount; i++){
 				semver_free(&f->nwjsVersions[i].version);
 				indexJson_file_free_downloads(&f->nwjsVersions[i].defaultDownloads);
-				indexJson_file_free_downloads(&f->nwjsVersions[i].naclDownloads);
-				indexJson_file_free_downloads(&f->nwjsVersions[i].sdkDownloads);
 			}
 			free(f->nwjsVersions);
 		}

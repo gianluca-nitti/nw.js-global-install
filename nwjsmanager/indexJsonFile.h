@@ -19,8 +19,6 @@ typedef struct{
 typedef struct{
 	semver_t version;
 	nwjsDownload_t defaultDownloads;
-	nwjsDownload_t naclDownloads;
-	nwjsDownload_t sdkDownloads;
 }nwjsVersion_t;
 
 typedef struct{

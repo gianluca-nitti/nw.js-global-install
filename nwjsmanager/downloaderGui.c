@@ -68,7 +68,6 @@ int downloadCb(){
 			sprintf(versionName, "v%d.%d.%d", launchVersion->version.major, launchVersion->version.minor, launchVersion->version.patch);
 			nwjsDownload_t *downloads = &launchVersion->defaultDownloads;
 			char *url;
-			//TODO: use sdk or nacl build when required.
 			#ifdef _WIN32
 				//Actually on Windows only a 32-bit binary is distributed since it will work out-of-the box thanks to Wow64. The IsWow64 function (see win-only/IsWow64.c) is used to detect at runtime if we are on a 64-bit system and properly select the nw.js architecture.
 				if(IsWow64())
