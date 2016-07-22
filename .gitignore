@@ -10,6 +10,7 @@ nwjsmanager/test/test-data
 nwjsmanager/test/win/testZip.exe
 nwjsmanager/test/testTextFile.txt
 nwjsmanager/test/chroot
+nwjsmanager/test/urlList
 nwjsmanager/build/
 nwjsmanager/lib/
 nwjsmanager/tools/ledc

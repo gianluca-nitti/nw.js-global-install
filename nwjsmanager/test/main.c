@@ -126,12 +126,15 @@ int parseIndexJson(){
 		return 0;
 	}
 	result = indexJson.nwjsmanagerLatestVersion.major == 1 && indexJson.nwjsmanagerLatestVersion.minor == 0 && indexJson.nwjsmanagerLatestVersion.patch == 0 && indexJson.nwjsmanagerUrgentUpdate;
+	FILE *urlList = fopen("urlList", "w"); //Generate a list of URLs used to download binaries, which can be checked by an external script.
 	for(int i = 0; i < indexJson.nwjsVersionCount; i++){
 		if(indexJson.nwjsVersions[i].version.major == 0 && indexJson.nwjsVersions[i].version.minor == 12)
 			result &= indexJson.nwjsVersions[i].defaultDownloads.linux64 != NULL;
 		else if (indexJson.nwjsVersions[i].version.major == 0 && indexJson.nwjsVersions[i].version.minor == 13)
 			result &= indexJson.nwjsVersions[i].defaultDownloads.linux32 != NULL;
+		fprintf(urlList, "%s\n%s\n%s\n%s\n", indexJson.nwjsVersions[i].defaultDownloads.linux32, indexJson.nwjsVersions[i].defaultDownloads.linux64, indexJson.nwjsVersions[i].defaultDownloads.win32, indexJson.nwjsVersions[i].defaultDownloads.win64);
 	}
+	fclose(urlList);
 	indexJson_file_free(&indexJson);
 	return result;
 }

@@ -4,6 +4,7 @@ applauncher:
 	cd applauncher && $(MAKE)
 nwjsmanager:
 	cd nwjsmanager && $(MAKE) test
+	./nwjsmanager/test/checkUrls.js
 	cd nwjsmanager && $(MAKE)
 cli:
 	cd cli && npm install && jshint index.js
