@@ -41,9 +41,9 @@ int indexJson_file_parse(char *f, indexJsonFile_t *out){
 	out->nwjsVersionCount = file.tokens[nwjs_versions_root_token].size;
 	out->nwjsVersions = malloc(out->nwjsVersionCount * sizeof(nwjsVersion_t));
 	for(int i = 0; i < out->nwjsVersionCount; i++){
-		char *v = json_file_get_value_from_key(&file, "version", nwjs_versions[i]);
+		char *v = json_file_get_token_value(&file, nwjs_versions[i]);
 		if(semver_parse(v, &out->nwjsVersions[i].version) == 0){
-			char *baseUrl = string_concat(4, "http://dl.nwjs.io/v", v, "nwjs-v", v, "");
+			char *baseUrl = string_concat(4, "http://dl.nwjs.io/v", v, "/nwjs-v", v, "");
 			out->nwjsVersions[i].defaultDownloads.linux32 = string_concat(2, baseUrl, "-linux-ia32.tar.gz");
 			out->nwjsVersions[i].defaultDownloads.linux64 = string_concat(2, baseUrl, "-linux-x64.tar.gz");
 			out->nwjsVersions[i].defaultDownloads.win32 = string_concat(2, baseUrl, "-win-ia32.zip");
