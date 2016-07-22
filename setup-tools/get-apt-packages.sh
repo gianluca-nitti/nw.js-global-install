@@ -17,6 +17,7 @@ apt-get install -y libtool          # Required to build curl.
 apt-get install -y nsis             # To compile Windows installer.
 apt-get install -y nodejs nodejs-legacy npm       # For jshint.
 npm install -g jshint               # To check for errors in the cli tool.
+npm install -g jsonlint             # To lint json files (like index.json)
 
 #These links are necessary for the cross-compilation from x86_64 Linux to x86 Linux to link the code with the GTK driver and it's dependencies (credit: http://stackoverflow.com/a/20845987)
 ln -sf /lib/i386-linux-gnu/libglib-2.0.so.0 /usr/lib32/libglib-2.0.so

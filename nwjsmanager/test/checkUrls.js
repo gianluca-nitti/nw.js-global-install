@@ -7,11 +7,11 @@ var path = require('path');
 var http = require('http');
 
 var urls = fs.readFileSync(path.join(__dirname, '/urlList'), 'utf8').split('\n');
-if(urls[urls.length - 1] == '')
+if(urls[urls.length - 1] === '')
 	urls.pop(); //Remove the last item, that is an empty line
 
 urls.forEach(function(url){
-	if(!url.startsWith('http://dl.nwjs.io/')){
+	if(url.lastIndexOf('http://dl.nwjs.io/', 0) !== 0){ //Check if url starts with http://dl.nwjs.io/
 		console.error(url + ' points to the wrong domain.');
 		process.exit(1);
 	}
