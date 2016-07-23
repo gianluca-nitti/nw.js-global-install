@@ -1,7 +1,8 @@
 [Desktop Entry]
-Name={{appName}}
-Exec=/opt/{{appName}}/{{appName}}
+Name={{guiName}}
+Exec=/opt/{{name}}/{{name}}
 Terminal=false
-Icon=/opt/{{appName}}/icon.png
+Icon=/opt/{{name}}/icon.png
 Type=Application
-Categories={{appCategories}}
+Categories={{categories}}
+Comment={{description}}

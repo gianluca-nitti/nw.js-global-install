@@ -46,7 +46,7 @@ int downloadCb(){
 	recursiveMkdir(cachePath, 0755); //Create directories if they don't already exist
 	indexJsonFile_t versionIndex = {};
 	if(download(INDEXJSON_URL, indexJsonPath, genericCb) != DOWNLOAD_SUCCESS){
-		printf("[nwjsmanager][DEBUG] Failed to download versio index at URL '%s'. Cached version will be used if available.\n", INDEXJSON_URL);
+		printf("[nwjsmanager][DEBUG] Failed to download version index at URL '%s'. Cached version will be used if available.\n", INDEXJSON_URL);
 	}
 	indexJson_file_parse(indexJsonPath, &versionIndex);
 	if(versionIndex.nwjsVersionCount != 0){
