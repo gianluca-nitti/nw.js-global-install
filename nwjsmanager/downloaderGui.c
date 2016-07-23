@@ -19,7 +19,7 @@
 #include "globals.h"
 #include "downloaderGui.h"
 
-static Ihandle *pb, *status;
+static Ihandle *downloaderGui, *pb, *status;
 int stop = 0;
 int globalResult = DOWNLOADERGUI_ERROR;
 
@@ -27,11 +27,13 @@ int progressCb(long total, long now, double kBps){
 	double progress = (double)now/(double)total;
 	IupSetDouble(pb, "VALUE", progress);
 	IupSetStrf(status, "TITLE", "Total file size: %dKb, downloaded: %dKb\n(progress: %d%%, average speed: %dkBps)", total/1000, now/1000, (int)(progress*100), (int)kBps);
+	IupRefresh(downloaderGui);
 	IupLoopStep();
 	return stop;
 }
 
 int genericCb(long total, long now, double kBps){
+	IupRefresh(downloaderGui);
 	IupLoopStep();
 	return 0;
 }
@@ -114,19 +116,21 @@ int downloadCb(){
 	return IUP_CLOSE;
 }
 
-void cancelCb(){
+int cancelCb(){
 	if(IupAlarm("nwjsmanager", "If you stop the download of the nw.js runtime files, you won't be able to run the application.\nAre you sure?", "Yes", "No", NULL) == 1)
 		stop = 1;
+	return IUP_IGNORE;
 }
 
 
 
 //Downloads und installs the latest supported nw.js version for the specified application.
 int downloaderGui_download(){
-	Ihandle *downloaderGui = IupGetHandle("downloaderDlg");
+	downloaderGui = IupGetHandle("downloaderDlg");
 	pb = IupGetHandle("pb");
 	status = IupGetHandle("status");
 	IupSetCallback(IupGetHandle("cancel"), "ACTION", (Icallback)cancelCb);
+	IupSetCallback(downloaderGui, "CLOSE_CB", (Icallback)cancelCb);
 	IupSetFunction("IDLE_ACTION", downloadCb);
 	IupPopup(downloaderGui, IUP_CENTERPARENT, IUP_CENTERPARENT);
 	return globalResult;

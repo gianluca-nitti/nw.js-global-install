@@ -1,13 +1,11 @@
-downloaderDlg = dialog[TITLE="Downloading...", ALIGNMENT=ACENTER, MARGIN=10x10, ICON=MAINICON, SIZE=THIRDxQUARTER](
-	hbox(
-		vbox(
-			info = label("This application is based on the nw.js framework. The required nw.js runtime files are being downloaded, please wait. This is only required for the first run of the application."),
+downloaderDlg = dialog[TITLE="Downloading...", ALIGNMENT=ACENTER, MARGIN=10x10, ICON=MAINICON, SIZE=HALFxQUARTER, RESIZE=NO](
+		vbox[EXPAND=HORIZONTAL](
+			info = label("This application is based on the nw.js framework.\nThe required nw.js runtime files are being downloaded, please wait.\nThis is only required for the first run of the application."),
 			pb = progressbar[EXPAND=HORIZONTAL](),
-			status = label[EXPAND=YES]("Starting download..."),
 			hbox(
+				status = label("Starting download..."),
 				fill(),
 				cancel = button("Cancel", NULL)
 			)
 		)
-	)
 )

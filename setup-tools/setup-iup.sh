@@ -14,15 +14,15 @@ getLibFiles(){
 	rm lib/iup-temp
 	printf "Done.\n\n"
 }
-getLibFiles "3.15/Linux%20Libraries/iup-3.15_Linux32_64_lib.tar.gz/download" linux64
-getLibFiles "3.15/Linux%20Libraries/iup-3.15_Linux32_lib.tar.gz/download" linux32
-getLibFiles "3.15/Windows%20Libraries/Static/iup-3.15_Win32_mingw4_lib.zip/download" win32
+getLibFiles "3.19.1/Linux%20Libraries/iup-3.19.1_Linux32_64_lib.tar.gz/download" linux64
+getLibFiles "3.19.1/Linux%20Libraries/iup-3.19.1_Linux32_lib.tar.gz/download" linux32
+getLibFiles "3.19.1/Windows%20Libraries/Static/iup-3.19.1_Win32_mingw4_lib.zip/download" win32
 
 # This will download the IUP tools, including the necessary LEDC compiler for LED files, to the tools/ directory.
 
 mkdir -p tools
 echo "Downloading IUP tools..."
-wget -O tools/iuptools.tar.gz http://sourceforge.net/projects/iup/files/3.15/Tools%20Executables/iup-3.15_Linux319_64_bin.tar.gz
+wget -O tools/iuptools.tar.gz http://sourceforge.net/projects/iup/files/3.19.1/Tools%20Executables/iup-3.19.1_Linux319_64_bin.tar.gz
 echo "Extracting ledc..."
 tar -C tools -zxvf tools/iuptools.tar.gz ledc
 rm tools/iuptools.tar.gz
