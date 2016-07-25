@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/gianluca-nitti/nw.js-global-install#readme",
   "dependencies": {
-    "cli": "^0.11.2",
     "fs-extra": "^0.30.0",
     "ignore": "^3.1.3",
     "lazy-json": "0.0.11",

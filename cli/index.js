@@ -7,7 +7,6 @@ var os = require('os');
 var crypto = require('crypto');
 
 var lazyjson = require('lazy-json');
-var cli = require('cli');
 var swig = require('swig');
 var request = require('sync-request');
 var recursiveReadSync = require('recursive-readdir-sync');
@@ -100,12 +99,15 @@ function exec(cmd, args){
 	log.info(cmd + ' exited.');
 }
 
-cli.parse(null, ['init', 'build']);
+if(process.argv.length < 3 || (process.argv[2] !== 'init' && process.argv[2] !== 'build')){
+	console.log('Usage:\n  nw-global-build (init | build) [package types...]\n\n  The init command creates the required configuration file, named nw-global.json, in the current directory. This should be customized with details of the applications.\n  The build command builds the packages types defined in nw-global.json, or, if specified, the package types passed on the command line; supported package types are "win" (architecture-indipendent Windows installer), "deb32", "deb64" (i386 and x86_64 packages for Debian-like Linux distributions), "rpm32", "rpm64" (i386 and x86_64 packages for RPM-based Linux distributions).');
+	process.exit(1);
+}
 
-if(cli.command === 'init'){
+if(process.argv[2] === 'init'){
 	cp(path.join(__dirname, 'default-config.json'), 'nw-global.json');
 	console.log('nw-global.json created. Edit it to configure the build process and build with "nw-global-build build".');
-}else if(cli.command === "build"){
+}else if(process.argv[2] === "build"){
 	var conf, packageJson;
 	try{
 		packageJson = lazyjson.requireJSON('./package.json');
@@ -149,6 +151,27 @@ if(cli.command === 'init'){
 	var license = getConfValue('license');
 	if(!(fs.existsSync(license) && fs.statSync(license).isFile()))
 		fail('Failed to open the license file at "' + license + '". Please check nw-global.json.');
+
+	var outputFormats = [];
+	if(process.argv.length === 3)
+		outputFormats = getConfValue('default-output', ["win", "deb32", "deb64", "rpm32", "rpm64"]);
+	else
+		process.argv.forEach(function(value, index){
+			if(index > 2)
+				outputFormats.push(value);
+		});
+	if(outputFormats.length === 0)
+		fail('Nothing to do! Please specify package type(s) to be built (win, deb32, deb64, rpm32, rpm64) either on the command line or in nw-global.json.');
+	var invalidFormats = [];
+	outputFormats.forEach(function(value){
+		if(["win", "deb32", "deb64", "rpm32", "rpm64"].indexOf(value) === -1)
+			invalidFormats.push(value);
+	});
+	if(invalidFormats.length !== 0)
+		fail('Invalid package type(s): ' + invalidFormats + '. Valid package types are win, deb32, deb64, rpm32, rpm64.');
+	else
+		log.info('Package type(s) to be built: ' + outputFormats);
+
 
 	log.info('Generating list of application\'s files...');
 	var appFiles = recursiveReadSync('.');
@@ -237,13 +260,19 @@ if(cli.command === 'init'){
 			exec('fpm', '-f -s dir -t ' + format + ' -p ' + path.join(outDir, appName + '-linux-' + realArch + '.' + format) + ' -C ' + tmpRoot + ' -a ' + realArch + ' --directories=/opt/' + appName + installScripts + pkgMetadata);
 			log.notice('Successfully built ' + format + '-' + realArch + ' package.');
 		};
-		buildPkg('deb', 32);
-		buildPkg('deb', 64);
-		buildPkg('rpm', 32);
-		buildPkg('rpm', 64);
+		if(outputFormats.indexOf('deb32') !== -1)
+			buildPkg('deb', 32);
+		if(outputFormats.indexOf('deb64') !== -1)
+			buildPkg('deb', 64);
+		if(outputFormats.indexOf('rpm32') !== -1)
+			buildPkg('rpm', 32);
+		if(outputFormats.indexOf('rpm64') !== -1)
+			buildPkg('rpm', 64);
 		fs.removeSync(tmpRoot);
 	};
 
-	buildWindows();
-	buildLinux();
+	if(outputFormats.indexOf('win') !== -1)
+		buildWindows();
+	if(outputFormats.indexOf('deb32') !== -1 || outputFormats.indexOf('deb64') !== -1 || outputFormats.indexOf('rpm32') !== -1 || outputFormats.indexOf('rpm64') !== -1)
+		buildLinux();
 }
