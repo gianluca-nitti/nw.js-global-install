@@ -99,15 +99,20 @@ function exec(cmd, args){
 	log.info(cmd + ' exited.');
 }
 
-if(process.argv.length < 3 || (process.argv[2] !== 'init' && process.argv[2] !== 'build')){
-	console.log('Usage:\n  nw-global-build (init | build) [package types...]\n\n  The init command creates the required configuration file, named nw-global.json, in the current directory. This should be customized with details of the applications.\n  The build command builds the packages types defined in nw-global.json, or, if specified, the package types passed on the command line; supported package types are "win" (architecture-indipendent Windows installer), "deb32", "deb64" (i386 and x86_64 packages for Debian-like Linux distributions), "rpm32", "rpm64" (i386 and x86_64 packages for RPM-based Linux distributions).');
+if(process.argv.length < 3 || (process.argv[2] !== 'init' && process.argv[2] !== 'build' && process.argv[2] !== 'update')){
+	console.log('Usage:\n  nw-global-build (init | update | build) [package types...]\n\n  The init command creates the required configuration file, named nw-global.json, in the current directory. This should be customized with details of the application.\n\n  The update command updates the global binary cache by downloading the binary files necessary to build the packages. Depending on your npm installation folder, you may need to run "sudo nw-global-build update" before "nw-global-build build" to download the binaries to the cache folder, which is a subdirectory of the installation folder of the nw-global-build npm module so you may need sudo permissions to write there.\n\n  The build command builds the packages of the types defined in nw-global.json, or, if specified, of the types passed on the command line; supported package types are "win" (architecture-indipendent Windows installer), "deb32", "deb64" (i386 and x86_64 packages for Debian-like Linux distributions), "rpm32", "rpm64" (i386 and x86_64 packages for RPM-based Linux distributions). "nw-global-build build" will automatically try to download the required binaries if not already cached, but as said before this may not work due to permission issues; if this happens, DON\'T run "sudo nw-global-build build" because it would put the root user (instead of your user) as owner of the built packages; the correct way to fix this is to run "sudo nw-global-build update" to build or update the cache, and then "nw-global-build build" to build the packages as normal user.');
 	process.exit(1);
 }
 
 if(process.argv[2] === 'init'){
 	cp(path.join(__dirname, 'default-config.json'), 'nw-global.json');
 	console.log('nw-global.json created. Edit it to configure the build process and build with "nw-global-build build".');
-}else if(process.argv[2] === "build"){
+}else if(process.argv[2] === 'update'){
+	log.notice('Begin updating the binary cache, located at ' + path.join(__dirname, '/bin'));
+	['applauncher.exe', 'applauncher-linux32', 'applauncher-linux64', 'nwjsmanager.exe', 'nwjsmanager-linux32', 'nwjsmanager-linux64'].forEach(function(name){
+		log.notice(name + ' is now cached here: ' + getBinary(name));
+	});
+}else if(process.argv[2] === 'build'){
 	var conf, packageJson;
 	try{
 		packageJson = lazyjson.requireJSON('./package.json');

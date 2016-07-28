@@ -1,6 +1,6 @@
 {
   "name": "nw-global-build",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Tool to package nw.js applications with a launcher which will allow the application to use a system-wide installed version of the nw.js runtime.",
   "main": "index.js",
   "bin": {
