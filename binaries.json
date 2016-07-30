@@ -1,26 +1,26 @@
 {
-	"applauncher.exe":{
+	"applauncher.exe": {
 		"path": "applauncher/v1.0.0",
-		"checksum": "da006b5e4ff030a23b6066b8e03d5da8ffb7f43a908f4d4a62b382dedb833279"
+		"checksum": "333d222266666f8b60e8247cd011368dceb6034065edf67880b51da50b094da3"
 	},
-	"nwjsmanager.exe":{
-		"path": "v1.0.0",
-		"checksum": "9057749a92164ef51f61bdd7ef22a18695b4262e94577c39992be9cea8706204"
-	},
-	"applauncher-linux32":{
+	"applauncher-linux32": {
 		"path": "applauncher/v1.0.0",
 		"checksum": "d2e98dea61f0ef9efbc127ce38e4f5434fc17af2f76f037338af3ccce225a789"
 	},
-	"applauncher-linux64":{
+	"applauncher-linux64": {
 		"path": "applauncher/v1.0.0",
 		"checksum": "9e9c4aa5c24ba2f08c04339fc764ff6ca9645eeb22599f6d00aaf4a3d10a9e74"
 	},
-	"nwjsmanager-linux32":{
+	"nwjsmanager.exe": {
 		"path": "v1.0.0",
-		"checksum": "ee51211ebf33996974323448706cef653f091d136a0699872c47b6dcdebd9b8b"
+		"checksum": "5ce6dc5931cbf5fe7cc0dfb23907c6f9bd57de1aa7058374af1ff9410fc9de8e"
 	},
-	"nwjsmanager-linux64":{
+	"nwjsmanager-linux32": {
 		"path": "v1.0.0",
-		"checksum": "0b702dc90332c607a1235cdf4fa3f4caed8c00fb220232529f3d7117cafbdff4"
+		"checksum": "6a88378d8f6c1252a7d66629d8c3e3f9f838d38fbeabc145a5066a8df28d41c1"
+	},
+	"nwjsmanager-linux64": {
+		"path": "v1.0.0",
+		"checksum": "b851149988309c0d8cb8308b504f3f85b87323223b0094fe8fe930217be24760"
 	}
 }

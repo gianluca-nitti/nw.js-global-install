@@ -11,8 +11,8 @@ test: clean
 	gcc --std=gnu99 -O0 -Wall -Werror main.c test.c $(SRC) $(INCS) $(LIBS) -g -o $@
 
 run: test
-	mkdir -p test-data chroot/var/cache/nwjs/bin/{invalid-name,v0.12.1,v,vinvalid-version,v0.13.0} #Set up chroot environment to simulate some locally installed nw.js versions
-	printf "app1\napp2\napp3\napp4\n" > chroot/var/cache/nwjs/appList #Simulate a list off installed applications
+	mkdir -p test-data chroot/usr/lib/nwjs/bin/{invalid-name,v0.12.1,v,vinvalid-version,v0.13.0} #Set up chroot environment to simulate some locally installed nw.js versions
+	printf "app1\napp2\napp3\napp4\n" > chroot/usr/lib/nwjs/appList #Simulate a list off installed applications
 	@echo "Sudo is required to run chroot-based tests. If you don't want to give sudo permissions, you can build without tests with 'cd nwjsmanager && make' from the root of the project."
 	sudo ./$< #Run test
 

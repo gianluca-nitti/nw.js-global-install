@@ -14,7 +14,7 @@ char* path_get_nwjs_cache(){
 		path = strcat(path, "\\nwjs\\bin\\");
 		return path;
 	#else
-		return strdup("/var/cache/nwjs/bin/");
+		return strdup("/usr/lib/nwjs/bin/");
 	#endif
 }
 
