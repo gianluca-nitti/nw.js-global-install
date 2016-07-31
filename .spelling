@@ -1,0 +1,31 @@
+# markdown-spellcheck spelling configuration file
+# Format - lines beginning # are comments
+# global dictionary is at the start, file overrides afterwards
+# one word per line, to define a file override use ' - filename'
+# where filename is relative to this configuration file
+nw.js
+nw
+nsis
+i386
+javascript
+npm
+fpm
+nwjsmanager
+applauncher
+ - README.md
+nwjsmanager
+NSIS-based
+40MB
+applauncher
+1MB
+ - cli/README.md
+_64
+rpmbuild
+0
+1
+node.js
+2
+3
+4
+5
+6
