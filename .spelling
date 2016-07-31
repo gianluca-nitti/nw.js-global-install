@@ -12,6 +12,7 @@ npm
 fpm
 nwjsmanager
 applauncher
+semver
  - README.md
 nwjsmanager
 NSIS-based

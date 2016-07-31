@@ -12,7 +12,7 @@ To build Linux packages you need [`fpm`](https://github.com/jordansissel/fpm), a
 ## Usage
 * Step 0: make sure you have installed the dependencies for the package types you want to build (see the previous section).
 * Step 1: install this tool with `npm install -g nw-global-build` (you may need `sudo` depending on your node.js installation).
-* Step 2: navigate (`cd`) to the root directory of the nw.js application you want to package (the root is where the `package.json` is located).
+* Step 2: navigate (`cd`) to the root directory of the nw.js application you want to package. The root is where the `package.json` is located. Make sure you have added the *nwjsmanager* section with the version filter in `package.json` as explained [here](https://github.com/gianluca-nitti/nw.js-global-install/blob/master/README.md#specifying-a-nw.js-version-filter).
 * Step 3: run `nw-global-build init`. This will put a `nw-global.json` file in the directory, which you can (and should) edit to customize the build process.
 * Step 4: open `nw-global.json` with your editor. Read the comments to understand what each field means, and edit the fields according to your needs.
 * Step 5: run `nw-global-build update`. If you had to use `sudo` at Step 1, you'll need it here too. This builds a cache of the binaries required during the build process (*nwjsmanager* and *applauncher* for the various platforms) in a subdirectory of the `nw-global-build` npm module (since it's installed globally, this is the reason you may need ```sudo```).
