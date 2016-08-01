@@ -9,7 +9,7 @@ A tiny native executable (*applauncher*) is packed with the application: the dev
 This repository also contains a command line tool that automates the process of building packages and installers for your nw.js application. See it's README [here](https://github.com/gianluca-nitti/nw.js-global-install/blob/master/cli/README.md).
 
 ## Specifying a nw.js version filter
-When *nwjsmanager* needs to download an nw.js version, the latest one compatible with the application is chosen. To specify what nw.js versions are compatible with your application, you need to add this section to your `package.json`:
+When *nwjsmanager* needs to download an nw.js version, the latest one compatible with the application is chosen. To specify which nw.js versions are compatible with your application, you need to add this section to your `package.json`:
 ```
 "nwjsmanager":{
 	"nwjs-version-filter": ">=0.15.1" //Example
