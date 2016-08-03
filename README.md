@@ -7,6 +7,7 @@ A tiny native executable (*applauncher*) is packed with the application: the dev
 
 ## Resources for application developers
 This repository also contains a command line tool that automates the process of building packages and installers for your nw.js application. See it's README [here](https://github.com/gianluca-nitti/nw.js-global-install/blob/master/cli/README.md).
+To start packaging applications with this system-wide nwjs installation method, [get the cli tool from npm](https://www.npmjs.com/package/nw-global-build).
 
 ## Specifying a nw.js version filter
 When *nwjsmanager* needs to download an nw.js version, the latest one compatible with the application is chosen. To specify which nw.js versions are compatible with your application, you need to add this section to your `package.json`:
@@ -19,3 +20,8 @@ The filter string is made of a [semver](http://semver.org/) operator and a versi
 
 ## Flowchart ([bitmap version](http://i.imgur.com/9yT4De1.png?1))
 ![flowchart](https://cdn.rawgit.com/gianluca-nitti/nw.js-global-install/master/Flowchart.svg)
+
+## Other resources
+* There are currently a couple of issues with packages generated with the cli tool: https://github.com/gianluca-nitti/nw.js-global-install/issues.
+* [Thread on the nw.js discussion group](https://groups.google.com/forum/#!topic/nwjs-general/xv_GKgLgwkU)
+* [Post on my blog](http://gntheprogrammer.blogspot.com/2016/08/nwjs-system-wide-installation.html)

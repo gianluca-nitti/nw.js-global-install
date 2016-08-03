@@ -13,6 +13,8 @@ fpm
 nwjsmanager
 applauncher
 semver
+nwjs
+cli
  - README.md
 nwjsmanager
 NSIS-based
