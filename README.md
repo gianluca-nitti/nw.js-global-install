@@ -23,5 +23,6 @@ The filter string is made of a [semver](http://semver.org/) operator and a versi
 
 ## Other resources
 * There are currently a couple of issues with packages generated with the cli tool: https://github.com/gianluca-nitti/nw.js-global-install/issues.
+* [Repository with example application](https://github.com/gianluca-nitti/nw-image-viewer)
 * [Thread on the nw.js discussion group](https://groups.google.com/forum/#!topic/nwjs-general/xv_GKgLgwkU)
 * [Post on my blog](http://gntheprogrammer.blogspot.com/2016/08/nwjs-system-wide-installation.html)
