@@ -31,6 +31,7 @@
     "log": "^1.4.0",
     "recursive-readdir-sync": "^1.0.6",
     "swig": "^1.4.2",
-    "sync-request": "^3.0.1"
+    "sync-request": "^3.0.1",
+    "to-ico-sync": "^1.0.5"
   }
 }

@@ -11,6 +11,7 @@ var swig = require('swig');
 var request = require('sync-request');
 var recursiveReadSync = require('recursive-readdir-sync');
 var ignore = require('ignore');
+var toIco = require('to-ico-sync');
 var Log = require('log');
 
 var log = new Log('notice');
@@ -218,9 +219,12 @@ if(process.argv[2] === 'init'){
 		var template_win = swig.compileFile(path.join(__dirname, '/install/setup-win.nsi'));
 		var applauncher_win = path.join(outDir, 'intermediate/' + appName + '.exe');
 		cp(getBinary('applauncher.exe'), applauncher_win);
-		//TODO: set icon
+		var winIcoPath = path.join(outDir, 'intermediate/icon.ico');
+		log.info('Converting icon file to Windows icon format (source: ' + iconPath + ')');
+		fs.writeFileSync(winIcoPath, toIco([fs.readFileSync(iconPath)])); //Convert png to ico
+		log.info('Generated icon file at ' + winIcoPath);
 		var script_win = template_win({appName: appName, guiName: guiName, appVersion: appVersion, nwjsmanager: getBinary('nwjsmanager.exe'), license: license, appDirs: appDirsWin});
-		var nsiPath = path.join(outDir, "intermediate/setup-win.nsi");
+		var nsiPath = path.join(outDir, 'intermediate/setup-win.nsi');
 		fs.writeFileSync(nsiPath, script_win);
 		exec('makensis', nsiPath);
 		log.notice('Succesfully built Windows installer.');
