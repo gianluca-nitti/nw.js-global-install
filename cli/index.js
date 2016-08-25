@@ -224,7 +224,7 @@ if(process.argv[2] === 'init'){
 		fs.writeFileSync(winIcoPath, toIco([fs.readFileSync(iconPath)])); //Convert png to ico
 		log.info('Generated icon file at ' + winIcoPath);
 		log.info('Adding icon to Windows version of applauncher');
-		var rceditCmd = process.platform === 'win32' ? 'rcedit.exe' : 'wine rcedit.exe';
+		var rceditCmd = (process.platform === 'win32' ? '' : 'wine ') + path.join(__dirname, '/rcedit.exe');
 		if(!getConfValue('skip-win-icon', false))
 			exec(rceditCmd, applauncher_win + ' --set-icon ' + winIcoPath);
 		var script_win = template_win({appName: appName, guiName: guiName, appVersion: appVersion, nwjsmanager: getBinary('nwjsmanager.exe'), license: license, appDirs: appDirsWin});
