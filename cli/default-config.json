@@ -3,6 +3,7 @@
 	// Version is read from package.json.
 	"gui-name": "Your Application's Name", //User-friendly name. This will be displayed in setup dialogs and similar.
 	"icon": "icon.png", //Path to a PNG icon for the application (relative to the root directory of the application, i.e. the directory this nw-global.json file is in).
+	"skip-win-icon": false, //If true, the icon on the Windows executable won't be changed. This allows to run the build process on Linux without Wine, but will produce a Windows executable with the default icon (a nw.js logo).
 	"description": "An nw.js based application.", //Short description of the application.
 	"license": "LICENSE", //Name/path to a license text file. If you keep the default, you have to put a file named "LICENSE" in the same directory as nw-global.json.
 	"maintainer-name": "A package maintainer", //Full name of package maintainer
