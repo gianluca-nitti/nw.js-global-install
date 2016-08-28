@@ -139,6 +139,28 @@ if(process.argv[2] === 'init'){
 	};
 
 	log = new Log(getConfValue('log-level', 'notice'));
+
+	var checkUpdates = getConfValue('check-updates', true);
+	var outdated = false;
+
+	var currentVer = JSON.parse(fs.readFileSync(path.join(__dirname, '/package.json'))).version;
+	log.info('This is nw-global-build ' + currentVer);
+	if(checkUpdates){
+		log.info('Checking for updates...');
+		var latestVer = JSON.parse(request('GET', 'http://registry.npmjs.org/nw-global-build').getBody())['dist-tags'].latest;
+		log.info('Latest version is ' + latestVer);
+		if(require('semver').gt(latestVer, currentVer)){
+			outdated = true;
+			log.notice('An update for nw-global-build is available (running version is ' + currentVer + ', latest is '+ latestVer + '). Please run "npm update -g nw-global-build" to upgrade.');
+			if(getConfValue('force-updates', true))
+				fail('Update is required. Please run "npm update -g nw-global-build" (sudo may be required), then rerun "nw-global-build build".');
+			else
+				log.warning('Continuing with the current (outdated) version. You can force the build to fail if nw-global-build isn\'t up-to-date by setting force-updates to true in nw-global.json.');
+		}else
+			log.info('nw-global-build is up-to-date.');
+	}else
+		log.warning('Skipping update check. You can change this behaviour by setting check-updates to true in nw-global.json.');
+
 	var outDir = getConfValue('out-dir', 'dist');
 	mkdir(outDir);
 	mkdir(path.join(outDir, 'intermediate'));
@@ -288,4 +310,8 @@ if(process.argv[2] === 'init'){
 		buildWindows();
 	if(outputFormats.indexOf('deb32') !== -1 || outputFormats.indexOf('deb64') !== -1 || outputFormats.indexOf('rpm32') !== -1 || outputFormats.indexOf('rpm64') !== -1)
 		buildLinux();
+	if(!checkUpdates)
+		log.warning('This build ran without checking for nw-global-build updates. You can set check-updates to true in nw-global.json to change this behaviour.');
+	else if(outdated)
+		log.warning('This build ran with an outdated version of nw-global-build. To upgrade, use "npm update -g nw-global-build" (sudo may be required). You can force the build to fail if the tool is outdated by setting force-updates to true in nw-global.json.');
 }

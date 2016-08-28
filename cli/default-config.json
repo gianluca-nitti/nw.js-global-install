@@ -12,5 +12,7 @@
 	"out-dir": "dist", //Directory where generated installers/packages will be placed.
 	"ignore": ["*~"], //Array of patterns for files that mustn't be packaged. The value of out-dir is automatically added at runtime (output files from a previous build are always excluded). This file, nw-global.json, is also always ignored. The format is that of the .gitignore rules. More info here: https://www.npmjs.com/package/ignore
 	"log-level": "notice", //Verbosity level of the build tool. Range is Error(failure messages only), Warning, Notice, Info, Debug (with full output of any underlying command such as makensis or fpm). Based on https://www.npmjs.com/package/log.
-	"default-output": ["win", "deb32", "deb64", "rpm32", "rpm64"] //Packages to generate when "nw-global-build build" is run. Allowed values are "win", "deb32", "deb64", "rpm32", "rpm64". Can be overridden on command line (e.g. if you run "nw-global-build build deb64" only a x86_64 Debian package is generated, ignoring this configuration entry).
+	"default-output": ["win", "deb32", "deb64", "rpm32", "rpm64"], //Packages to generate when "nw-global-build build" is run. Allowed values are "win", "deb32", "deb64", "rpm32", "rpm64". Can be overridden on command line (e.g. if you run "nw-global-build build deb64" only a x86_64 Debian package is generated, ignoring this configuration entry).
+	"check-updates": true, //If true, nw-global-build will check if the running version is the latest available on npm and print a notice message if it's not.
+	"force-updates": true //If true, the build will fail if nw-global-build isn't up-to-date. Ignored if check-updates is false.
 }
