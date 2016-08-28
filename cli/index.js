@@ -209,7 +209,18 @@ if(process.argv[2] === 'init'){
 	appFiles = appFilesFilter.filter(appFiles);
 	log.notice((totalFiles - appFiles.length) + ' files are being ignored.');
 
-	var iconPath = getConfValue('icon', path.join(__dirname, '/install/default-icon.png')); //TODO: implement conversion
+	//Log a warning if git related files are being included
+	var gitIncluded = false;
+	appFiles.forEach(function(f){
+		if(f.indexOf('.git') !== -1){
+			gitIncluded = true;
+			log.debug(f + ' is likely to be a .gitignore file or a file from a .git directory.');
+		}
+	});
+	if(gitIncluded)
+		log.warning('Seems like a .git directory or a .gitignore file is being included. You probably don\'t want this in the packages to ship; you can prevent it to be included during next builds by adding ".git" and ".gitignore" to the ignore array in nw-global.json.');
+
+	var iconPath = getConfValue('icon', path.join(__dirname, '/install/default-icon.png'));
 
 	var buildWindows = function(){
 		log.notice('Begin building installer for Windows.');
