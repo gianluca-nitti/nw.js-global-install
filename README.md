@@ -26,3 +26,29 @@ The filter string is made of a [semver](http://semver.org/) operator and a versi
 * [Repository with example application](https://github.com/gianluca-nitti/nw-image-viewer)
 * [Thread on the nw.js discussion group](https://groups.google.com/forum/#!topic/nwjs-general/xv_GKgLgwkU)
 * [Post on my blog](http://gntheprogrammer.blogspot.com/2016/08/nwjs-system-wide-installation.html)
+
+## Libraries involved
+The tools in this repository are made possible thanks to the following projects. Both *applauncher* and *nwjsmanager* are compiled with [gcc](https://gcc.gnu.org/) (natively on Linux and cross-compiled to Windows with [MingW](http://www.mingw.org/)).
+
+* *applauncher* links to:
+	* (Linux version only) [GTK+](http://www.gtk.org/), LGPL licensed, and related libraries (GDK, Pango, Glib (LGPL), Xlib (MIT))
+* *nwjsmanager* links to:
+	* [curl](https://curl.haxx.se/) ([MIT-like license](https://curl.haxx.se/docs/copyright.html))
+	* [IUP](http://webserver2.tecgraf.puc-rio.br/iup/) ([MIT](http://webserver2.tecgraf.puc-rio.br/iup/en/copyright.html)), user interface library that uses the native Win32 API on Windows and GTK+ on Linux (which is dinamically linked with nwjsmanager too).
+	* [jsmn](http://zserge.com/jsmn.html) ([MIT](https://github.com/zserge/jsmn/blob/master/LICENSE))
+	* [semver.c](https://github.com/h2non/semver.c) ([MIT](https://github.com/h2non/semver.c/blob/master/LICENSE))
+	* [zlib](http://www.zlib.net/) ([zlib license](http://www.zlib.net/zlib_license.html))
+	and uses parts of code from the following projects:
+	* (Windows version only) [junzip](https://github.com/jokkebk/JUnzip) ([public domain/unlicense](https://github.com/jokkebk/JUnzip/blob/master/LICENSE))
+	* (Windows version only) Part of the [IsWow64Process function example](https://msdn.microsoft.com/it-it/library/windows/desktop/ms684139(v=vs.85).aspx), [MS-PL licensed](https://msdn.microsoft.com/en-us/cc300389.aspx) is included in the *nwjsmanager/win-only/IsWow64.c* file
+	* (Linux version only) [untar.c](https://github.com/libarchive/libarchive/blob/master/contrib/untar.c) (public domain, as stated in the source file)
+* the cli tool uses the following node modules:
+	* [fs-extra](https://github.com/jprichardson/node-fs-extra) ([MIT](https://github.com/jprichardson/node-fs-extra/blob/master/LICENSE))
+	* [ignore](https://github.com/kaelzhang/node-ignore) ([MIT](https://github.com/kaelzhang/node-ignore/blob/master/LICENSE-MIT))
+	* [lazy-json](https://github.com/egoist/lazy-json) ([MIT](https://github.com/egoist/lazy-json/blob/master/LICENSE))
+	* [log](https://github.com/tj/log.js) ([MIT](https://github.com/tj/log.js#license))
+	* [recursive-readdir-sync](https://github.com/battlejj/recursive-readdir-sync) ([MIT](https://github.com/battlejj/recursive-readdir-sync/blob/master/LICENSE))
+	* [semver](https://github.com/npm/node-semver) ([ISC](https://github.com/npm/node-semver/blob/master/LICENSE))
+	* [swig](https://github.com/paularmstrong/swig) ([license](https://github.com/paularmstrong/swig/blob/master/LICENSE))
+	* [sync-request](https://github.com/ForbesLindesay/sync-request) ([MIT](https://github.com/ForbesLindesay/sync-request/blob/master/LICENSE))
+	* [to-ico-sync](https://github.com/gianluca-nitti/to-ico-sync), fork of [to-ico](https://github.com/kevva/to-ico) ([MIT](https://github.com/kevva/to-ico/blob/master/license))
